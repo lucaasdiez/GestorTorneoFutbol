@@ -8,6 +8,7 @@ import com.gtf.repository.FechaRepository;
 import com.gtf.service.partido.PartidoService;
 import com.gtf.service.torneo.TorneoService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class FechaServiceImp implements FechaService {
     private final FechaRepository fechaRepository;
     private final TorneoService torneoService;
     private final PartidoService partidoService;
+    private final ModelMapper modelMapper;
 
     @Override
     public Fecha getFechaById(Integer id) {
@@ -28,7 +30,7 @@ public class FechaServiceImp implements FechaService {
 
     //Funciona?
     @Override
-    public Fecha agregarFecha(FechaDTO fechaDTO) {
+    public Fecha agregarFecha( FechaDTO fechaDTO) {
         Torneo torneo= torneoService.getTorneoById(fechaDTO.getTorneo().getId());
         List<Partido> partidos = new ArrayList<>();
         int cantidad = fechaDTO.getPartidos().size();
@@ -42,5 +44,10 @@ public class FechaServiceImp implements FechaService {
         fecha.setTorneo(torneo);
         fecha.setPartidos(partidos);
         return  fechaRepository.save(fecha);
+    }
+
+    @Override
+    public FechaDTO convertirFechaADTO(Fecha fecha) {
+        return modelMapper.map(fecha, FechaDTO.class);
     }
 }

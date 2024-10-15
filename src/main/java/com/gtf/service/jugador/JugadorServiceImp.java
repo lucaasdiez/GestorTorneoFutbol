@@ -34,7 +34,8 @@ public class JugadorServiceImp implements JugadorService {
         jugador.setNombre(jugadorDTO.getNombre());
         jugador.setApellido(jugadorDTO.getApellido());
         jugador.setPosicion(jugadorDTO.getPosicion());
-        jugador.setEquipo(jugadorDTO.getEquipo());
+        Equipo equipo = modelMapper.map(jugadorDTO.getEquipo(), Equipo.class);
+        jugador.setEquipo(equipo);
         return jugadorRepository.save(jugador);
     }
 

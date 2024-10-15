@@ -3,6 +3,7 @@ package com.gtf.service.partido;
 import com.gtf.dto.PartidoDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.*;
+import com.gtf.repository.FechaRepository;
 import com.gtf.repository.PartidoRepository;
 import com.gtf.service.arbitro.ArbitroService;
 import com.gtf.service.equipo.EquipoService;
@@ -18,7 +19,7 @@ public class PartidoServiceImp implements PartidoService {
     private final ModelMapper modelMapper;
     private final ArbitroService arbitroService;
     private final EquipoService equipoService;
-    private final FechaService fechaService;
+    private final FechaRepository fechaRepository;
 
     @Override
     public Partido getPartidoById(Integer id) {
@@ -27,11 +28,12 @@ public class PartidoServiceImp implements PartidoService {
     }
 
     @Override
-    public Partido agregarPartido(PartidoDTO partidoDTO) {
+    public Partido agregarPartido( PartidoDTO partidoDTO) {
         Arbitro arbitro = arbitroService.getArbitroById(partidoDTO.getArbitro().getId());
         Equipo equipoLocal = equipoService.getEquipoById(partidoDTO.getEquipo_local().getId());
         Equipo equipoVisitante = equipoService.getEquipoById(partidoDTO.getEquipo_visitante().getId());
-        Fecha fecha = fechaService.getFechaById(partidoDTO.getFecha().getId());
+        Fecha fecha = fechaRepository.findById(partidoDTO.getFecha().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Fecha no encontrada"));
         Partido partido = new Partido();
         partido.setArbitro(arbitro);
         partido.setEquipo_local(equipoLocal);
@@ -50,7 +52,8 @@ public class PartidoServiceImp implements PartidoService {
     @Override
     public Partido actualizarFechaPartido(PartidoDTO partidoDTO) {
         Partido partido = getPartidoById(partidoDTO.getId());
-        partido.setFecha(partidoDTO.getFecha());
+        Fecha fecha = modelMapper.map(partidoDTO.getFecha(), Fecha.class);
+        partido.setFecha(fecha);
         return partidoRepository.save(partido);
     }
 

@@ -18,7 +18,7 @@ public class JugadorDTO {
     private int goles;
     private int tarjetaAmarilla;
     private int tarjetaRoja;
-    private Equipo equipo;
+    private EquipoDTO equipo;
     private EstadisticaJugador estadisticaJugador;
     private EventoPartido eventoPartido;
 

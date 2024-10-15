@@ -21,8 +21,8 @@ public class EquipoDTO {
     private int golesContra;
     private List<JugadorDTO> jugadores;
     private TorneoDTO torneo;
-    private List<Partido> partidosLocal;
-    private List<Partido> partidosVisitante;
+    private List<PartidoDTO> partidosLocal;
+    private List<PartidoDTO> partidosVisitante;
     private EstadisticaEquipo estadisticaEquipo;
 
 }

@@ -14,6 +14,6 @@ public class TorneoDTO {
     private Integer id;
     private int nombre;
     private String estado;
-    private List<Fecha> fechas;
+    private List<FechaDTO> fechas;
     private List<EquipoDTO> equipos;
 }

@@ -25,8 +25,10 @@ public class Jugador {
     @ManyToOne
     @JoinColumn(name = "equipo_id")
     private Equipo equipo;
-    @OneToOne(mappedBy = "jugador")
+    //cascade = CascadeType.ALL asegura que cualquier operación realizada en Jugador (como REMOVE) se propague a las estadísticas asociadas.
+    //orphanRemoval = true asegura que si un Jugador es eliminado, todas las estadísticas asociadas también se eliminen.
+    @OneToOne(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private EstadisticaJugador estadisticaJugador;
-    @OneToOne(mappedBy = "jugador")
+    @OneToOne(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private EventoPartido eventoPartido;
 }

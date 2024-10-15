@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 public class PartidoDTO {
     private Integer id;
     private String resultado;
-    private Equipo equipo_local;
-    private Equipo equipo_visitante;
-    private Arbitro arbitro;
-    private Fecha fecha;
+    private EquipoDTO equipo_local;
+    private EquipoDTO equipo_visitante;
+    private ArbitroDTO arbitro;
+    private FechaDTO fecha;
 }
