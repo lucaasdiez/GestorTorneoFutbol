@@ -1,8 +1,6 @@
 package com.gtf.dto;
 
-import com.gtf.model.Arbitro;
-import com.gtf.model.Equipo;
-import com.gtf.model.Fecha;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

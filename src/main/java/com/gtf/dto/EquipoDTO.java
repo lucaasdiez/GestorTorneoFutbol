@@ -1,9 +1,6 @@
 package com.gtf.dto;
 
 import com.gtf.model.EstadisticaEquipo;
-import com.gtf.model.Jugador;
-import com.gtf.model.Partido;
-import com.gtf.model.Torneo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,5 +21,6 @@ public class EquipoDTO {
     private List<PartidoDTO> partidosLocal;
     private List<PartidoDTO> partidosVisitante;
     private EstadisticaEquipo estadisticaEquipo;
+    private UsuarioDTO usuario;
 
 }

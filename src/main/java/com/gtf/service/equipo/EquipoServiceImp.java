@@ -2,10 +2,12 @@ package com.gtf.service.equipo;
 
 import com.gtf.dto.EquipoDTO;
 import com.gtf.dto.JugadorDTO;
+import com.gtf.dto.UsuarioDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Equipo;
 import com.gtf.model.Jugador;
 import com.gtf.model.Torneo;
+import com.gtf.model.Usuario;
 import com.gtf.repository.EquipoRepository;
 import com.gtf.repository.JugadorRepository;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +65,8 @@ public class EquipoServiceImp implements EquipoService{
         newEquipo.setJugadores(jugadores);
         Torneo torneo= modelMapper.map(equipoDTO.getTorneo(), Torneo.class);
         newEquipo.setTorneo(torneo);
+        Usuario usuario = modelMapper.map(equipoDTO.getUsuario(), Usuario.class);
+        newEquipo.setUsuario(usuario);
         equipoRepository.save(newEquipo);
         return newEquipo;
     }
@@ -73,6 +77,8 @@ public class EquipoServiceImp implements EquipoService{
         List<JugadorDTO> jugadoresDTO =jugadores.stream()
                 .map(jugador -> modelMapper.map(jugador, JugadorDTO.class))
                 .toList();
+        UsuarioDTO usuarioDTO = modelMapper.map(equipo.getUsuario(), UsuarioDTO.class);
+        equipoDTO.setUsuario(usuarioDTO);
         equipoDTO.setJugadores(jugadoresDTO);
         return equipoDTO;
     }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 
 import java.util.List;
 
@@ -13,19 +14,17 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Torneo {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private int nombre;
-    private String estado;
+    @NaturalId
+    private String usuario;
+    private String password;
 
+    @OneToOne(mappedBy = "usuario")
+    private Equipo equipo;
 
-    @OneToMany(mappedBy = "torneo")
-    private List<Fecha> fechas;
-    @OneToMany(mappedBy = "torneo")
-    private List<Equipo> equipos;
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @OneToMany(mappedBy = "usuario")
+    private List<Torneo> torneos;
 }

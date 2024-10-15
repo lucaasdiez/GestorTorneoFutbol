@@ -34,6 +34,9 @@ public class Equipo {
     private List<Partido> partidosVisitante;
     @OneToOne(mappedBy = "equipo")
     private EstadisticaEquipo estadisticaEquipo;
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
 
 }

@@ -1,6 +1,6 @@
 package com.gtf.dto;
 
-import com.gtf.model.Equipo;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

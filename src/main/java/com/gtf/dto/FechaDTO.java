@@ -1,6 +1,6 @@
 package com.gtf.dto;
 
-import com.gtf.model.Partido;
+
 import com.gtf.model.Torneo;
 import lombok.AllArgsConstructor;
 import lombok.Data;

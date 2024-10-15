@@ -1,6 +1,5 @@
 package com.gtf.dto;
 
-import com.gtf.model.Equipo;
 import com.gtf.model.EstadisticaJugador;
 import com.gtf.model.EventoPartido;
 import lombok.AllArgsConstructor;
