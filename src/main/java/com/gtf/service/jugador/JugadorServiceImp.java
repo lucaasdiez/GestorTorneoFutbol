@@ -4,7 +4,9 @@ import com.gtf.dto.JugadorDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Equipo;
 import com.gtf.model.Jugador;
+import com.gtf.repository.EquipoRepository;
 import com.gtf.repository.JugadorRepository;
+import com.gtf.service.equipo.EquipoService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,17 @@ import java.util.List;
 public class JugadorServiceImp implements JugadorService {
     private final JugadorRepository jugadorRepository;
     private final ModelMapper modelMapper;
+    private final EquipoService equipoService;
 
     @Override
     public Jugador getJugadorById(Integer id) {
         return jugadorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encotrado"));
+    }
+
+    @Override
+    public Jugador getJugadorByNombre(String nombre) {
+        return jugadorRepository.findByNombreIgnoreCase(nombre)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encotrado"));
     }
 
@@ -30,11 +39,11 @@ public class JugadorServiceImp implements JugadorService {
 
     @Override
     public Jugador agregarJugador(JugadorDTO jugadorDTO) {
+        Equipo equipo = equipoService.getEquipoById(jugadorDTO.getEquipo().getId());
         Jugador jugador = new Jugador();
         jugador.setNombre(jugadorDTO.getNombre());
         jugador.setApellido(jugadorDTO.getApellido());
         jugador.setPosicion(jugadorDTO.getPosicion());
-        Equipo equipo = modelMapper.map(jugadorDTO.getEquipo(), Equipo.class);
         jugador.setEquipo(equipo);
         return jugadorRepository.save(jugador);
     }
@@ -45,8 +54,8 @@ public class JugadorServiceImp implements JugadorService {
     }
 
     @Override
-    public List<Jugador> getJugadoresPorEquipo(Equipo equipo) {
-        return jugadorRepository.findByEquipo(equipo);
+    public List<Jugador> getJugadoresByEquipoNombre(String equipo) {
+        return jugadorRepository.findByEquipoNombreIgnoreCase(equipo);
     }
 
     @Override

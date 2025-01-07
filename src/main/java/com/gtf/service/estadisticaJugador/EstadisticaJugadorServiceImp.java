@@ -55,7 +55,7 @@ public class EstadisticaJugadorServiceImp implements EstadisticaJugadorService {
 
     @Override
     public EstadisticaJugador getEstadisticaJugadorByNombreJugador(String nombre) {
-        return estadisticaJugadorRepository.findEstadisticaJugadorByJugadorNombre(nombre);
+        return estadisticaJugadorRepository.findEstadisticaJugadorByJugadorNombreIgnoreCase(nombre);
     }
 
     @Override

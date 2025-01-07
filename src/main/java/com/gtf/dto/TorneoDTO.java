@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TorneoDTO {
     private Integer id;
-    private int nombre;
+    private String nombre;
     private String estado;
     private List<FechaDTO> fechas;
     private List<EquipoDTO> equipos;

@@ -6,6 +6,7 @@ import com.gtf.model.Fecha;
 
 public interface FechaService {
     Fecha getFechaById(Integer id);
+    Fecha getFechaByNumero(int numero);
     Fecha agregarFecha(FechaDTO fechaDTO);
     FechaDTO convertirFechaADTO(Fecha fecha);
 }

@@ -1,6 +1,7 @@
 package com.gtf.model;
 
 import com.gtf.dto.JugadorDTO;
+import com.gtf.enums.EquipoEstado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,8 @@ public class Equipo {
     private int partidosJugados;
     private int golesFavor;
     private int golesContra;
+
+    private EquipoEstado estadoEquipo;
 
     @OneToMany(mappedBy = "equipo")
     private List<Jugador> jugadores;

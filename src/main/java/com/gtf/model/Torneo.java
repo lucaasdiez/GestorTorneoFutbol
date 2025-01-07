@@ -1,5 +1,6 @@
 package com.gtf.model;
 
+import com.gtf.enums.TorneoEstado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +18,8 @@ public class Torneo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private int nombre;
-    private String estado;
+    private String nombre;
+    private TorneoEstado estado;
 
 
     @OneToMany(mappedBy = "torneo")

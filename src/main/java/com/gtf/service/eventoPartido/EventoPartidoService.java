@@ -9,7 +9,6 @@ import java.util.List;
 public interface EventoPartidoService {
     EventoPartido agregarEvento(EventoPartidoDTO eventoPartidoDTO);
     EventoPartido getEventoPartidoById(Integer id);
-    List<EventoPartido> getEventoPartidoByEquipo(String  equipo);
-    List<EventoPartido> getEventoPartidoByJugador(String jugador);
+    List<EventoPartido> getEventoByEquipoYJugador(String equipo, String jugador);
     EventoPartidoDTO convertirEventoPartidoaDTO(EventoPartido eventoPartido);
 }

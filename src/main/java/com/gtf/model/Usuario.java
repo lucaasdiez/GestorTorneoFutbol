@@ -1,5 +1,6 @@
 package com.gtf.model;
 
+import com.gtf.enums.UsuarioEstado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,8 @@ public class Usuario {
     @NaturalId
     private String usuario;
     private String password;
+
+    private UsuarioEstado estadoCuenta;
 
     @OneToOne(mappedBy = "usuario")
     private Equipo equipo;

@@ -1,6 +1,7 @@
 package com.gtf.service.usuario;
 
 import com.gtf.dto.UsuarioDTO;
+import com.gtf.enums.UsuarioEstado;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Usuario;
 import com.gtf.repository.UsuarioRepository;
@@ -30,12 +31,21 @@ public class UsuarioServiceImp implements UsuarioService{
 
     @Override
     public void eliminarUsuario(Integer id) {
-        usuarioRepository.deleteById(id);
+       Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+       usuario.setEstadoCuenta(UsuarioEstado.Desactivado);
+       usuarioRepository.save(usuario);
     }
 
     @Override
     public Usuario getusuarioByID(Integer id) {
         return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+    }
+
+    @Override
+    public Usuario getUsuarioByUsuario(String usuario) {
+        return usuarioRepository.findByUsuarioIgnoreCase(usuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
 
