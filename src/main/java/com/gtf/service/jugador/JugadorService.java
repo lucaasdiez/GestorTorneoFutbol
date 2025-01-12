@@ -14,4 +14,5 @@ public interface JugadorService {
     void eliminarJugador(Integer id);
     List<Jugador> getJugadoresByEquipoNombre(String equipo);
     JugadorDTO convertirAJugadorDTO(Jugador jugador);
+    List<JugadorDTO> convertirAJugadoresDTO(List<Jugador> jugadores);
 }

@@ -44,7 +44,7 @@ public class UsuarioServiceImp implements UsuarioService{
     }
 
     @Override
-    public Usuario getUsuarioByUsuario(String usuario) {
+    public Usuario getUsuarioByNombreUsuario(String usuario) {
         return usuarioRepository.findByUsuarioIgnoreCase(usuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }

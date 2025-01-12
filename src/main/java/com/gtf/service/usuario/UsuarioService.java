@@ -7,6 +7,6 @@ public interface UsuarioService {
     Usuario registrarUsuario(UsuarioDTO usuarioDTO);
     void eliminarUsuario(Integer id);
     Usuario getusuarioByID(Integer id);
-    Usuario getUsuarioByUsuario(String usuario);
+    Usuario getUsuarioByNombreUsuario(String usuario);
     UsuarioDTO convertirUsuarioADTO(Usuario usuario);
 }

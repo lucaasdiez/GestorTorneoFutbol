@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,6 +29,11 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario")
     private Equipo equipo;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Torneo> torneos;
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_torneo",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "torneo_id")
+    )
+    private Set<Torneo> torneos;
 }

@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +63,12 @@ public class JugadorServiceImp implements JugadorService {
     public JugadorDTO convertirAJugadorDTO(Jugador jugador) {
         return modelMapper.map(jugador, JugadorDTO.class);
 
+    }
+
+    @Override
+    public List<JugadorDTO> convertirAJugadoresDTO(List<Jugador> jugadores) {
+        return jugadores.stream()
+                .map(jugador -> modelMapper.map(jugador, JugadorDTO.class))
+                .toList();
     }
 }

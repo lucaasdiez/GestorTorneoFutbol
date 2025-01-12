@@ -3,13 +3,24 @@ package com.gtf.service.partido;
 import com.gtf.dto.PartidoDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.*;
+import com.gtf.repository.ArbitroRepository;
 import com.gtf.repository.FechaRepository;
 import com.gtf.repository.PartidoRepository;
 import com.gtf.service.arbitro.ArbitroService;
 import com.gtf.service.equipo.EquipoService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +30,11 @@ public class PartidoServiceImp implements PartidoService {
     private final ArbitroService arbitroService;
     private final EquipoService equipoService;
     private final FechaRepository fechaRepository;
+    private final ArbitroRepository arbitroRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Override
     public Partido getPartidoById(Integer id) {
@@ -42,22 +58,50 @@ public class PartidoServiceImp implements PartidoService {
     }
 
     @Override
-    public Partido actualizarResultadoPartido(PartidoDTO partidoDTO) {
-        Partido partido = getPartidoById(partidoDTO.getId());
+    public Partido actualizarPartido(PartidoDTO partidoDTO) {
+        Partido partido = partidoRepository.findById(partidoDTO.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado"));
+        Arbitro arbitro = arbitroRepository.findById(partidoDTO.getArbitro().getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Arbitro no encontrado"));
         partido.setResultado(partidoDTO.getResultado());
+        partido.setFecha(partido.getFecha());
+        partido.setArbitro(arbitro);
         return partidoRepository.save(partido);
     }
 
     @Override
-    public Partido actualizarFechaPartido(PartidoDTO partidoDTO) {
-        Partido partido = getPartidoById(partidoDTO.getId());
-        Fecha fecha = modelMapper.map(partidoDTO.getFecha(), Fecha.class);
-        partido.setFecha(fecha);
-        return partidoRepository.save(partido);
+    public List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(int fecha, String equipoLocal, String equipoVisitante) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Partido> criteriaQuery = criteriaBuilder.createQuery(Partido.class);
+        Root<Partido> root = criteriaQuery.from(Partido.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if(fecha != 0){
+            predicates.add(criteriaBuilder.equal(root.get("fecha"), fecha));
+        }
+        if(equipoLocal != null){
+            predicates.add(criteriaBuilder.equal(
+                    criteriaBuilder.lower(root.get("equipo_local")), equipoLocal.toLowerCase()));
+        }
+        if(equipoVisitante != null){
+            predicates.add(criteriaBuilder.equal(
+                    criteriaBuilder.lower(root.get("equipo_visitante")), equipoVisitante.toLowerCase()));
+        }
+        criteriaQuery.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Partido> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList();
     }
+
 
     @Override
     public PartidoDTO convertirPartidoAPartidoDTO(Partido partido){
         return modelMapper.map(partido, PartidoDTO.class);
+    }
+
+    @Override
+    public List<PartidoDTO> convertirAPartidosDTO(List<Partido> partidos) {
+        return partidos.stream()
+                .map(partido -> modelMapper.map(partido, PartidoDTO.class))
+                .toList();
     }
 }

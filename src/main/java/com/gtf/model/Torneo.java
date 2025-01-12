@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,7 +27,6 @@ public class Torneo {
     private List<Fecha> fechas;
     @OneToMany(mappedBy = "torneo")
     private List<Equipo> equipos;
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @ManyToMany(mappedBy = "torneos")
+    private Set<Usuario> usuarios;
 }
