@@ -5,19 +5,14 @@ import com.gtf.dto.JugadorDTO;
 import com.gtf.dto.UsuarioDTO;
 import com.gtf.enums.EquipoEstado;
 import com.gtf.exeptions.ResourceNotFoundException;
-import com.gtf.model.Equipo;
-import com.gtf.model.Jugador;
-import com.gtf.model.Torneo;
-import com.gtf.model.Usuario;
-import com.gtf.repository.EquipoRepository;
-import com.gtf.repository.JugadorRepository;
-import com.gtf.repository.TorneoRepository;
-import com.gtf.repository.UsuarioRepository;
+import com.gtf.model.*;
+import com.gtf.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +22,7 @@ public class EquipoServiceImp implements EquipoService{
     private final JugadorRepository jugadorRepository;
     private final TorneoRepository torneoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EstadisticaEquipoRepository estadisticaEquipoRepository;
 
     @Override
     public Equipo getEquipoById(Integer id) {
@@ -62,15 +58,25 @@ public class EquipoServiceImp implements EquipoService{
     }
 
     private Equipo updateEquipoExistente(Equipo equipoExistente, EquipoDTO dto) {
-            equipoExistente.setNombre(dto.getNombre());
-            List<Jugador> jugadores = dto.getJugadores()
-                .stream()
-                .map(jugadorDTO -> modelMapper.map(jugadorDTO, Jugador.class))
-                .toList();
-            equipoExistente.setJugadores(jugadores);
-        Torneo torneo= modelMapper.map(dto.getTorneo(), Torneo.class);
-        equipoExistente.setTorneo(torneo);
-            return equipoExistente;
+        List<Jugador> jugadores = dto.getJugadores().stream()
+                        .map(jugador -> jugadorRepository.findById(jugador.getId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado")))
+                                .toList();
+        EstadisticaEquipo estadisticaEquipo = estadisticaEquipoRepository.findById(equipoExistente.getEstadisticaEquipo().getId())
+                .orElseThrow(()-> new ResourceNotFoundException("Estadistica Equipo no encontrado"));
+        estadisticaEquipo.setPuntos(dto.getEstadisticaEquipo().getPuntos());
+        estadisticaEquipo.setVictorias(dto.getEstadisticaEquipo().getVictorias());
+        estadisticaEquipo.setDerrotas(dto.getEstadisticaEquipo().getDerrotas());
+        estadisticaEquipo.setGolesContra(dto.getEstadisticaEquipo().getGolesContra());
+        estadisticaEquipo.setGolesFavor(dto.getEstadisticaEquipo().getGolesFavor());
+        estadisticaEquipo.setPartidosJugados(dto.getEstadisticaEquipo().getPartidosJugados());
+        estadisticaEquipo.setEquipo(equipoExistente);
+        estadisticaEquipoRepository.save(estadisticaEquipo);
+        equipoExistente.setEstadisticaEquipo(estadisticaEquipo);
+        equipoExistente.setJugadores(jugadores);
+        equipoExistente.setNombre(dto.getNombre());
+
+        return equipoRepository.save(equipoExistente);
     }
 
     @Override
@@ -91,7 +97,19 @@ public class EquipoServiceImp implements EquipoService{
         newEquipo.setUsuario(usuario);
         newEquipo.setEstadoEquipo(EquipoEstado.Activado);
         equipoRepository.save(newEquipo);
-        return newEquipo;
+        EstadisticaEquipo estadisticaEquipo = new EstadisticaEquipo();
+        estadisticaEquipo.setEquipo(newEquipo);
+        estadisticaEquipo.setDerrotas(equipoDTO.getEstadisticaEquipo().getDerrotas());
+        estadisticaEquipo.setPuntos(equipoDTO.getEstadisticaEquipo().getPuntos());
+        estadisticaEquipo.setVictorias(equipoDTO.getEstadisticaEquipo().getVictorias());
+        estadisticaEquipo.setDerrotas(equipoDTO.getEstadisticaEquipo().getDerrotas());
+        estadisticaEquipo.setGolesContra(equipoDTO.getEstadisticaEquipo().getGolesContra());
+        estadisticaEquipo.setGolesFavor(equipoDTO.getEstadisticaEquipo().getGolesFavor());
+        estadisticaEquipo.setPartidosJugados(equipoDTO.getEstadisticaEquipo().getPartidosJugados());
+        estadisticaEquipoRepository.save(estadisticaEquipo);
+        newEquipo.setEstadisticaEquipo(estadisticaEquipo);
+
+        return equipoRepository.save(newEquipo);
     }
 
     public EquipoDTO convertirEquipoADto(Equipo equipo) {

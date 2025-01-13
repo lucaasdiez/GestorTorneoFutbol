@@ -14,9 +14,6 @@ public class JugadorDTO {
     private String nombre;
     private String apellido;
     private String posicion;
-    private int goles;
-    private int tarjetaAmarilla;
-    private int tarjetaRoja;
     private EquipoDTO equipo;
     private EstadisticaJugador estadisticaJugador;
     private EventoPartido eventoPartido;

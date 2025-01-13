@@ -20,9 +20,6 @@ public class Equipo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
-    private int partidosJugados;
-    private int golesFavor;
-    private int golesContra;
 
     private EquipoEstado estadoEquipo;
 

@@ -13,9 +13,6 @@ import java.util.List;
 public class EquipoDTO {
     private Integer id;
     private String nombre;
-    private int partidosJugados;
-    private int golesFavor;
-    private int golesContra;
     private List<JugadorDTO> jugadores;
     private TorneoDTO torneo;
     private List<PartidoDTO> partidosLocal;

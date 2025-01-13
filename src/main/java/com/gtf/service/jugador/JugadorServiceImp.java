@@ -3,8 +3,10 @@ package com.gtf.service.jugador;
 import com.gtf.dto.JugadorDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Equipo;
+import com.gtf.model.EstadisticaJugador;
 import com.gtf.model.Jugador;
 import com.gtf.repository.EquipoRepository;
+import com.gtf.repository.EstadisticaJugadorRepository;
 import com.gtf.repository.JugadorRepository;
 import com.gtf.service.equipo.EquipoService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class JugadorServiceImp implements JugadorService {
     private final JugadorRepository jugadorRepository;
     private final ModelMapper modelMapper;
     private final EquipoService equipoService;
+    private final EstadisticaJugadorRepository estadisticaJugadorRepository;
 
     @Override
     public Jugador getJugadorById(Integer id) {
@@ -46,6 +49,17 @@ public class JugadorServiceImp implements JugadorService {
         jugador.setApellido(jugadorDTO.getApellido());
         jugador.setPosicion(jugadorDTO.getPosicion());
         jugador.setEquipo(equipo);
+        Jugador jugadorGuardado = jugadorRepository.save(jugador);
+        EstadisticaJugador estadisticaJugador = new EstadisticaJugador();
+        estadisticaJugador.setGoles(jugadorDTO.getEstadisticaJugador().getGoles());
+        estadisticaJugador.setJugador(jugadorGuardado);
+        estadisticaJugador.setAsistencias(jugadorDTO.getEstadisticaJugador().getAsistencias());
+        estadisticaJugador.setMinJugados(jugadorDTO.getEstadisticaJugador().getMinJugados());
+        estadisticaJugador.setTarjetaAmarilla(jugadorDTO.getEstadisticaJugador().getTarjetaAmarilla());
+        estadisticaJugador.setTarjetaRoja(jugadorDTO.getEstadisticaJugador().getTarjetaRoja());
+        estadisticaJugadorRepository.save(estadisticaJugador);
+        jugador.setEstadisticaJugador(estadisticaJugador);
+
         return jugadorRepository.save(jugador);
     }
 

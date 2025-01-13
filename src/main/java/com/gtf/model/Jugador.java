@@ -18,9 +18,6 @@ public class Jugador {
     private String nombre;
     private String apellido;
     private String posicion;
-    private int goles;
-    private int tarjetaAmarilla;
-    private int tarjetaRoja;
 
     @ManyToOne
     @JoinColumn(name = "equipo_id")
