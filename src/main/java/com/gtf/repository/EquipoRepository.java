@@ -12,4 +12,5 @@ public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
 
     List<Equipo> findByTorneoNombreIgnoreCase(String torneoNombre);
 
+    boolean existsByNombreIgnoreCase(String nombre);
 }

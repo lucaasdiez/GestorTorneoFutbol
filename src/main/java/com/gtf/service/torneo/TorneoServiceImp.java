@@ -29,9 +29,9 @@ public class TorneoServiceImp implements TorneoService {
     }
 
     @Override
-    public Torneo crearTorneo(TorneoDTO torneoDTO) {
+    public Torneo crearTorneo(String torneoNombre) {
         Torneo torneo = new Torneo();
-        torneo.setNombre(torneoDTO.getNombre());
+        torneo.setNombre(torneoNombre);
         torneo.setEstado(TorneoEstado.Comenzado);
         return torneoRepository.save(torneo);
     }

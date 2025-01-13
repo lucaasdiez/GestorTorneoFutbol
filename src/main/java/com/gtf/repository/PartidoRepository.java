@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PartidoRepository extends JpaRepository<Partido, Integer> {
 
+    Integer id(Integer id);
 }

@@ -18,11 +18,12 @@ import java.util.Optional;
 public class EstadisticaEquipoServiceImp implements EstadisticaEquipoService {
     private final EstadisticaEquipoRepository estadisticaEquipoRepository;
     private final ModelMapper modelMapper;
-    private final EquipoService equipoService;
+    private final EquipoRepository equipoRepository;
 
     @Override
-    public EstadisticaEquipo agregarEstditicaEquipo(EstadisticaEquipoDTO estadisticaEquipoDTO) {
-        Equipo equipo = equipoService.getEquipoById(estadisticaEquipoDTO.getEquipo().getId());
+    public EstadisticaEquipo agregarEstditicaEquipo(EstadisticaEquipoDTO estadisticaEquipoDTO, Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
         Optional<EstadisticaEquipo> estadisticaEquipoExistente = estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(equipo.getNombre());
         EstadisticaEquipo estadisticaEquipo;
         if (estadisticaEquipoExistente.isPresent()) {

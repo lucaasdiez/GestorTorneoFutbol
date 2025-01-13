@@ -1,10 +1,12 @@
 package com.gtf.service.estadisticaJugador;
 
 import com.gtf.dto.EstadisticaJugadorDTO;
+import com.gtf.dto.JugadorDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.EstadisticaJugador;
 import com.gtf.model.Jugador;
 import com.gtf.repository.EstadisticaJugadorRepository;
+import com.gtf.repository.JugadorRepository;
 import com.gtf.service.jugador.JugadorService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,13 +18,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EstadisticaJugadorServiceImp implements EstadisticaJugadorService {
     private final EstadisticaJugadorRepository estadisticaJugadorRepository;
-    private final JugadorService jugadorService;
     private final ModelMapper modelMapper;
+    private final JugadorRepository jugadorRepository;
 
 
     @Override
-    public EstadisticaJugador agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO) {
-        Jugador jugador = jugadorService.getJugadorById(estadisticaJugadorDTO.getJugador().getId());
+    public EstadisticaJugador agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO, Integer jugadorID) {
+        Jugador jugador = jugadorRepository.findById(jugadorID)
+                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
         Optional<EstadisticaJugador> estadisticaJugadorExistente = estadisticaJugadorRepository.findEstadisticaJugadorByJugadorId(estadisticaJugadorDTO.getJugador().getId());
         if(estadisticaJugadorExistente.isPresent()){
             EstadisticaJugador estadisticaJugador = estadisticaJugadorExistente.get();

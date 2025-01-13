@@ -62,17 +62,6 @@ public class EquipoServiceImp implements EquipoService{
                         .map(jugador -> jugadorRepository.findById(jugador.getId())
                                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado")))
                                 .toList();
-        EstadisticaEquipo estadisticaEquipo = estadisticaEquipoRepository.findById(equipoExistente.getEstadisticaEquipo().getId())
-                .orElseThrow(()-> new ResourceNotFoundException("Estadistica Equipo no encontrado"));
-        estadisticaEquipo.setPuntos(dto.getEstadisticaEquipo().getPuntos());
-        estadisticaEquipo.setVictorias(dto.getEstadisticaEquipo().getVictorias());
-        estadisticaEquipo.setDerrotas(dto.getEstadisticaEquipo().getDerrotas());
-        estadisticaEquipo.setGolesContra(dto.getEstadisticaEquipo().getGolesContra());
-        estadisticaEquipo.setGolesFavor(dto.getEstadisticaEquipo().getGolesFavor());
-        estadisticaEquipo.setPartidosJugados(dto.getEstadisticaEquipo().getPartidosJugados());
-        estadisticaEquipo.setEquipo(equipoExistente);
-        estadisticaEquipoRepository.save(estadisticaEquipo);
-        equipoExistente.setEstadisticaEquipo(estadisticaEquipo);
         equipoExistente.setJugadores(jugadores);
         equipoExistente.setNombre(dto.getNombre());
 
@@ -86,29 +75,13 @@ public class EquipoServiceImp implements EquipoService{
         Usuario usuario = usuarioRepository.findById(equipoDTO.getUsuario().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
         Equipo newEquipo = new Equipo();
+        if(equipoRepository.existsByNombreIgnoreCase(equipoDTO.getNombre())){
+            throw new IllegalArgumentException("Equipo ya existe");
+        }
         newEquipo.setNombre(equipoDTO.getNombre());
-        List<Jugador> jugadores = equipoDTO.getJugadores()
-                .stream()
-                .map(jugadorDTO -> jugadorRepository.findById(jugadorDTO.getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado")))
-                .toList();
-        newEquipo.setJugadores(jugadores);
         newEquipo.setTorneo(torneo);
         newEquipo.setUsuario(usuario);
         newEquipo.setEstadoEquipo(EquipoEstado.Activado);
-        equipoRepository.save(newEquipo);
-        EstadisticaEquipo estadisticaEquipo = new EstadisticaEquipo();
-        estadisticaEquipo.setEquipo(newEquipo);
-        estadisticaEquipo.setDerrotas(equipoDTO.getEstadisticaEquipo().getDerrotas());
-        estadisticaEquipo.setPuntos(equipoDTO.getEstadisticaEquipo().getPuntos());
-        estadisticaEquipo.setVictorias(equipoDTO.getEstadisticaEquipo().getVictorias());
-        estadisticaEquipo.setDerrotas(equipoDTO.getEstadisticaEquipo().getDerrotas());
-        estadisticaEquipo.setGolesContra(equipoDTO.getEstadisticaEquipo().getGolesContra());
-        estadisticaEquipo.setGolesFavor(equipoDTO.getEstadisticaEquipo().getGolesFavor());
-        estadisticaEquipo.setPartidosJugados(equipoDTO.getEstadisticaEquipo().getPartidosJugados());
-        estadisticaEquipoRepository.save(estadisticaEquipo);
-        newEquipo.setEstadisticaEquipo(estadisticaEquipo);
-
         return equipoRepository.save(newEquipo);
     }
 

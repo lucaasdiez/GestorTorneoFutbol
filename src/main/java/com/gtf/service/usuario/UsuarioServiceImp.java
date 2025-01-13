@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,37 +21,45 @@ public class UsuarioServiceImp implements UsuarioService{
     @Override
     public Usuario registrarUsuario(UsuarioDTO usuarioDTO) {
         return Optional.of(usuarioDTO)
-                .filter(usuario -> !usuarioRepository.existsUsuarioByUsuario(usuario.getUsuario()))
+                .filter(usuario -> !usuarioRepository.existsUsuarioByUsername(usuario.getUsername()))
                 .map(usuarioDTOReq ->{
                     Usuario usuario = new Usuario();
-                    usuario.setUsuario(usuarioDTOReq.getUsuario());
+                    usuario.setUsername(usuarioDTOReq.getUsername());
                     usuario.setPassword(usuarioDTOReq.getPassword());
+                    usuario.setEstadoCuenta(UsuarioEstado.Activado);
                     return usuarioRepository.save(usuario);
                 }).orElseThrow(()-> new ResourceNotFoundException("Usuario ya existente"));
     }
 
     @Override
-    public void eliminarUsuario(Integer id) {
-       Usuario usuario = usuarioRepository.findById(id)
+    public void eliminarUsuario(String nombreUsuario) {
+       Usuario usuario = usuarioRepository.findByUsername(nombreUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
        usuario.setEstadoCuenta(UsuarioEstado.Desactivado);
        usuarioRepository.save(usuario);
     }
 
-    @Override
-    public Usuario getusuarioByID(Integer id) {
-        return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-    }
 
     @Override
     public Usuario getUsuarioByNombreUsuario(String usuario) {
-        return usuarioRepository.findByUsuarioIgnoreCase(usuario)
+        return usuarioRepository.findByUsername(usuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
 
     @Override
     public UsuarioDTO convertirUsuarioADTO(Usuario usuario) {
         return modelMapper.map(usuario, UsuarioDTO.class);
+    }
+
+    @Override
+    public List<UsuarioDTO> convertirUsuarioDTO(List<Usuario> usuarios) {
+        return usuarios.stream()
+                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<Usuario> getAllUsuarios() {
+        return usuarioRepository.findAll();
     }
 }

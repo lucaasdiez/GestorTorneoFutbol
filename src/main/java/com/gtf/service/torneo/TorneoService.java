@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TorneoService {
     Torneo getTorneoById(Integer id);
-    Torneo crearTorneo(TorneoDTO torneoDTO);
+    Torneo crearTorneo(String torneoNombre);
     Torneo getTorneoByNombre(String nombre);
     List<Torneo> getTorneosPorEstado(TorneoEstado estado);
     Torneo agregarEquipoATorneo(Integer idTorneo, Integer idEquipo);

@@ -1,5 +1,6 @@
 package com.gtf.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gtf.dto.JugadorDTO;
 import com.gtf.enums.EquipoEstado;
 import jakarta.persistence.*;

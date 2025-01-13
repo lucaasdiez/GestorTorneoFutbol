@@ -15,7 +15,7 @@ public class JugadorDTO {
     private String apellido;
     private String posicion;
     private EquipoDTO equipo;
-    private EstadisticaJugador estadisticaJugador;
-    private EventoPartido eventoPartido;
+    private EstadisticaJugadorDTO estadisticaJugador;
+    private EventoPartidoDTO eventoPartido;
 
 }

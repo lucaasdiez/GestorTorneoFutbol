@@ -5,7 +5,7 @@ import com.gtf.model.EstadisticaJugador;
 
 
 public interface EstadisticaJugadorService {
-    EstadisticaJugador agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO);
+    EstadisticaJugador agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO, Integer jugadorID);
     EstadisticaJugador getEstadisticaJugadorById(Integer id);
     EstadisticaJugador getEstadisticaJugadorByNombreJugador(String nombre);
     EstadisticaJugadorDTO convertirEstadisticaJugadorADTO(EstadisticaJugador estadisticaJugador);

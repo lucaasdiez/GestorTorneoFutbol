@@ -21,8 +21,7 @@ import java.util.stream.Collectors;
 public class JugadorServiceImp implements JugadorService {
     private final JugadorRepository jugadorRepository;
     private final ModelMapper modelMapper;
-    private final EquipoService equipoService;
-    private final EstadisticaJugadorRepository estadisticaJugadorRepository;
+    private final EquipoRepository equipoRepository;
 
     @Override
     public Jugador getJugadorById(Integer id) {
@@ -43,23 +42,13 @@ public class JugadorServiceImp implements JugadorService {
 
     @Override
     public Jugador agregarJugador(JugadorDTO jugadorDTO) {
-        Equipo equipo = equipoService.getEquipoById(jugadorDTO.getEquipo().getId());
+        Equipo equipo = equipoRepository.findById(jugadorDTO.getEquipo().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Equipo no encotrado"));
         Jugador jugador = new Jugador();
         jugador.setNombre(jugadorDTO.getNombre());
         jugador.setApellido(jugadorDTO.getApellido());
         jugador.setPosicion(jugadorDTO.getPosicion());
         jugador.setEquipo(equipo);
-        Jugador jugadorGuardado = jugadorRepository.save(jugador);
-        EstadisticaJugador estadisticaJugador = new EstadisticaJugador();
-        estadisticaJugador.setGoles(jugadorDTO.getEstadisticaJugador().getGoles());
-        estadisticaJugador.setJugador(jugadorGuardado);
-        estadisticaJugador.setAsistencias(jugadorDTO.getEstadisticaJugador().getAsistencias());
-        estadisticaJugador.setMinJugados(jugadorDTO.getEstadisticaJugador().getMinJugados());
-        estadisticaJugador.setTarjetaAmarilla(jugadorDTO.getEstadisticaJugador().getTarjetaAmarilla());
-        estadisticaJugador.setTarjetaRoja(jugadorDTO.getEstadisticaJugador().getTarjetaRoja());
-        estadisticaJugadorRepository.save(estadisticaJugador);
-        jugador.setEstadisticaJugador(estadisticaJugador);
-
         return jugadorRepository.save(jugador);
     }
 

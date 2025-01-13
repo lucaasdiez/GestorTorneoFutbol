@@ -1,18 +1,24 @@
 package com.gtf.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import java.util.List;
-@Data
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class TorneoDTO {
     private Integer id;
     private String nombre;
     private String estado;
+    @JsonManagedReference
     private List<FechaDTO> fechas;
+    @JsonManagedReference
     private List<EquipoDTO> equipos;
+    @JsonManagedReference
+    private List<UsuarioDTO> usuarios;
 }

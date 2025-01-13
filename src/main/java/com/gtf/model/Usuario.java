@@ -1,5 +1,6 @@
 package com.gtf.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gtf.enums.UsuarioEstado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NaturalId
-    private String usuario;
+    private String username;
     private String password;
 
     private UsuarioEstado estadoCuenta;

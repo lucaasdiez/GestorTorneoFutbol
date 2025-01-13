@@ -1,5 +1,6 @@
 package com.gtf.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gtf.enums.TorneoEstado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

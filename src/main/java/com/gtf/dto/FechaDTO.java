@@ -1,6 +1,7 @@
 package com.gtf.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gtf.model.Torneo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class FechaDTO {
     private Integer id;
     private int numero;
     private LocalDate fechaDia;
-    private Torneo torneo;
+    @JsonBackReference
+    private TorneoDTO torneo;
     private List<PartidoDTO> partidos;
 }
