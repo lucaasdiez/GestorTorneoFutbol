@@ -1,13 +1,8 @@
 package com.gtf.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.gtf.dto.JugadorDTO;
-import com.gtf.enums.EquipoEstado;
+import com.gtf.enums.EstadoEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,13 +11,14 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Equipo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
 
-    private EquipoEstado estadoEquipo;
+    private EstadoEnum estadoEquipo;
 
     @OneToMany(mappedBy = "equipo")
     private List<Jugador> jugadores;
@@ -33,7 +29,7 @@ public class Equipo {
     private List<Partido> partidosLocal;
     @OneToMany(mappedBy = "equipo_visitante")
     private List<Partido> partidosVisitante;
-    @OneToOne(mappedBy = "equipo")
+    @OneToOne(mappedBy = "equipo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private EstadisticaEquipo estadisticaEquipo;
     @OneToOne
     @JoinColumn(name = "usuario_id")

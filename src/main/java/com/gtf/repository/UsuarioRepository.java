@@ -1,6 +1,6 @@
 package com.gtf.repository;
 
-import com.gtf.enums.UsuarioEstado;
+import com.gtf.model.Torneo;
 import com.gtf.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,5 +11,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     boolean existsUsuarioByUsername(String usuario);
 
     Optional<Usuario> findByUsername(String usuario);
+
+    Optional<Usuario> findByDni(String usuarioDni);
 
 }

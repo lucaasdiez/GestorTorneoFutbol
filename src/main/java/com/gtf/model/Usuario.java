@@ -1,15 +1,9 @@
 package com.gtf.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.gtf.enums.UsuarioEstado;
+import com.gtf.enums.EstadoEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.NaturalId;
+import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -17,15 +11,16 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NaturalId
+    private String dni;
     private String username;
     private String password;
 
-    private UsuarioEstado estadoCuenta;
+    private EstadoEnum estadoCuenta;
 
     @OneToOne(mappedBy = "usuario")
     private Equipo equipo;

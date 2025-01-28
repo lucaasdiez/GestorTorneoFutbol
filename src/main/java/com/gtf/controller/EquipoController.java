@@ -1,6 +1,7 @@
 package com.gtf.controller;
 
-import com.gtf.dto.EquipoDTO;
+import com.gtf.dto.equipo.SimpleEquipoDTO;
+import com.gtf.dto.equipo.FullEquipoDTO;
 import com.gtf.dto.EstadisticaEquipoDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Equipo;
@@ -27,8 +28,8 @@ public class EquipoController {
     public ResponseEntity<ApiResponse> getEquipoByNombre(@RequestParam String nombreEquipo){
         try {
             Equipo equipo = equipoService.getEquipoByNombre(nombreEquipo);
-            EquipoDTO equipoDTO = equipoService.convertirEquipoADto(equipo);
-            return ResponseEntity.ok(new ApiResponse("Equipo", equipoDTO));
+            FullEquipoDTO fullEquipoDTO = equipoService.convertirEquipoADto(equipo);
+            return ResponseEntity.ok(new ApiResponse("Equipo", fullEquipoDTO));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -38,8 +39,8 @@ public class EquipoController {
     public ResponseEntity<ApiResponse> getEquiposByTorneo(@RequestParam String torneoNombre){
         try {
             List<Equipo> equipos = equipoService.getEquiposByTorneo(torneoNombre);
-            List<EquipoDTO> equipoDTOS= equipoService.convertirAEquiposDTO(equipos);
-            return ResponseEntity.ok(new ApiResponse("Equipos del Torneo", equipoDTOS));
+            List<SimpleEquipoDTO> fullEquipoDTOS = equipoService.convertirAEquiposDTO(equipos);
+            return ResponseEntity.ok(new ApiResponse("Equipos del Torneo", fullEquipoDTOS));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -57,11 +58,10 @@ public class EquipoController {
     }
 
     @PostMapping("/equipo/agregar")
-    public ResponseEntity<ApiResponse> agregarEquipo(@RequestBody EquipoDTO equipoDTO){
+    public ResponseEntity<ApiResponse> agregarEquipo(@RequestBody SimpleEquipoDTO equipoDTO){
         try {
-            Equipo equipo = equipoService.agregarEquipo(equipoDTO);
-            EquipoDTO equipoDTO1 = equipoService.convertirEquipoADto(equipo);
-            return ResponseEntity.ok(new ApiResponse("Equipo Agregado", equipoDTO1));
+             equipoService.agregarEquipo(equipoDTO);
+            return ResponseEntity.ok(new ApiResponse("Equipo Agregado", null));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -71,9 +71,8 @@ public class EquipoController {
     public ResponseEntity<ApiResponse> agregarEstadisticaEquipo(@RequestBody EstadisticaEquipoDTO estadisticaEquipoDTO,
                                                                 @PathVariable Integer idEquipo){
         try {
-            EstadisticaEquipo estadisticaEquipo = estadisticaEquipoService.agregarEstditicaEquipo(estadisticaEquipoDTO, idEquipo);
-            EstadisticaEquipoDTO estadisticaEquipoDTO1 = estadisticaEquipoService.convertirEstadicticaEquipoADTO(estadisticaEquipo);
-            return ResponseEntity.ok(new ApiResponse("Estadisticas del equipo agregadas", estadisticaEquipoDTO1));
+            estadisticaEquipoService.agregarEstditicaEquipo(estadisticaEquipoDTO, idEquipo);
+            return ResponseEntity.ok(new ApiResponse("Estadisticas del equipo agregadas", null));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -92,11 +91,10 @@ public class EquipoController {
 
     @PutMapping("/equipo/{idEquipo}/modificar")
     public ResponseEntity<ApiResponse> modificarEquipo(@PathVariable Integer idEquipo,
-                                                       @RequestBody EquipoDTO equipoDTO){
+                                                       @RequestBody FullEquipoDTO fullEquipoDTO){
         try {
-            Equipo equipo = equipoService.updateEquipo(equipoDTO, idEquipo);
-            EquipoDTO equipoDTO1 = equipoService.convertirEquipoADto(equipo);
-            return ResponseEntity.ok(new ApiResponse("Equipo modificado", equipoDTO1));
+            equipoService.updateEquipo(fullEquipoDTO, idEquipo);
+            return ResponseEntity.ok(new ApiResponse("Equipo modificado", null));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

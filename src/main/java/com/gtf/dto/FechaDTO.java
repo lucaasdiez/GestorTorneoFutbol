@@ -13,10 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FechaDTO {
-    private Integer id;
     private int numero;
     private LocalDate fechaDia;
-    @JsonBackReference
-    private TorneoDTO torneo;
+    private Integer torneoId;
     private List<PartidoDTO> partidos;
 }

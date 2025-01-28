@@ -21,33 +21,27 @@ public class EstadisticaJugadorServiceImp implements EstadisticaJugadorService {
     private final ModelMapper modelMapper;
     private final JugadorRepository jugadorRepository;
 
-
     @Override
-    public EstadisticaJugador agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO, Integer jugadorID) {
-        Jugador jugador = jugadorRepository.findById(jugadorID)
+    public void agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO, String dni) {
+        Jugador jugador = jugadorRepository.findByDni(dni)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
-        Optional<EstadisticaJugador> estadisticaJugadorExistente = estadisticaJugadorRepository.findEstadisticaJugadorByJugadorId(estadisticaJugadorDTO.getJugador().getId());
-        if(estadisticaJugadorExistente.isPresent()){
-            EstadisticaJugador estadisticaJugador = estadisticaJugadorExistente.get();
-            estadisticaJugador.setJugador(jugador);
-            estadisticaJugador.setAsistencias( estadisticaJugador.getAsistencias() + estadisticaJugadorDTO.getAsistencias());
-            estadisticaJugador.setGoles( estadisticaJugador.getGoles()  + estadisticaJugadorDTO.getGoles());
-            estadisticaJugador.setTarjetaRoja(estadisticaJugador.getTarjetaRoja() + estadisticaJugadorDTO.getTarjetaRoja());
-            estadisticaJugador.setMinJugados(estadisticaJugador.getMinJugados() + estadisticaJugadorDTO.getMinJugados());
-            estadisticaJugador.setTarjetaAmarilla(estadisticaJugador.getTarjetaAmarilla()+ estadisticaJugadorDTO.getTarjetaAmarilla());
-            return estadisticaJugadorRepository.save(estadisticaJugador);
-
+        EstadisticaJugador estadisticaJugadorExistente = estadisticaJugadorRepository.findEstadisticaJugadorByJugadorNombreIgnoreCase(estadisticaJugadorDTO.getNombre_jugador());
+       EstadisticaJugador estadisticaJugador;
+        if(estadisticaJugadorExistente.getJugador().getDni().equals(dni)){
+             estadisticaJugador = estadisticaJugadorToEntity(estadisticaJugadorExistente, estadisticaJugadorDTO);
         }
         else {
-            EstadisticaJugador estadisticaJugador = new EstadisticaJugador();
-            estadisticaJugador.setJugador(jugador);
-            estadisticaJugador.setAsistencias(estadisticaJugadorDTO.getAsistencias());
-            estadisticaJugador.setGoles(estadisticaJugadorDTO.getGoles());
-            estadisticaJugador.setTarjetaRoja(estadisticaJugadorDTO.getTarjetaRoja());
-            estadisticaJugador.setTarjetaAmarilla(estadisticaJugadorDTO.getTarjetaAmarilla());
-            estadisticaJugador.setMinJugados(estadisticaJugadorDTO.getMinJugados());
-            return estadisticaJugadorRepository.save(estadisticaJugador);
+             estadisticaJugador = EstadisticaJugador.builder()
+                     .jugador(jugador)
+                     .asistencias(estadisticaJugadorDTO.getAsistencias())
+                     .goles(estadisticaJugadorDTO.getGoles())
+                     .tarjetaRoja(estadisticaJugadorDTO.getTarjetaRoja())
+                     .minJugados(estadisticaJugadorDTO.getMinJugados())
+                     .tarjetaAmarilla(estadisticaJugadorDTO.getTarjetaRoja())
+                     .build();
+
         }
+        estadisticaJugadorRepository.save(estadisticaJugador);
     }
 
     @Override
@@ -57,12 +51,27 @@ public class EstadisticaJugadorServiceImp implements EstadisticaJugadorService {
     }
 
     @Override
-    public EstadisticaJugador getEstadisticaJugadorByNombreJugador(String nombre) {
+    public EstadisticaJugador getEstadisticaJugadorByJugadorDni(String dni) {
+        return estadisticaJugadorRepository.findEstadisticaJugadorByJugadorDni(dni);
+    }
+
+    @Override
+    public EstadisticaJugador getEstadisticaJugadorByJugadorNombre(String nombre) {
         return estadisticaJugadorRepository.findEstadisticaJugadorByJugadorNombreIgnoreCase(nombre);
     }
 
     @Override
     public EstadisticaJugadorDTO convertirEstadisticaJugadorADTO(EstadisticaJugador estadisticaJugador) {
         return modelMapper.map(estadisticaJugador, EstadisticaJugadorDTO.class);
+    }
+
+    private EstadisticaJugador estadisticaJugadorToEntity(EstadisticaJugador estadisticaJugadorExistente, EstadisticaJugadorDTO estadisticaJugadorDTO) {
+        estadisticaJugadorExistente.setAsistencias(estadisticaJugadorExistente.getAsistencias() + estadisticaJugadorDTO.getAsistencias());
+        estadisticaJugadorExistente.setGoles(estadisticaJugadorExistente.getGoles() + estadisticaJugadorDTO.getGoles());
+        estadisticaJugadorExistente.setTarjetaRoja(estadisticaJugadorDTO.getTarjetaRoja() + estadisticaJugadorDTO.getTarjetaRoja());
+        estadisticaJugadorExistente.setTarjetaAmarilla(estadisticaJugadorDTO.getTarjetaAmarilla() + estadisticaJugadorDTO.getTarjetaAmarilla());
+        estadisticaJugadorExistente.setMinJugados(estadisticaJugadorDTO.getMinJugados() + estadisticaJugadorDTO.getMinJugados());
+
+        return estadisticaJugadorExistente;
     }
 }

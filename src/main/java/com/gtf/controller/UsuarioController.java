@@ -43,12 +43,11 @@ public class UsuarioController {
     }
 
 
-    @PostMapping("/usuario/registrar")
+    @PostMapping("/registrar")
     public ResponseEntity<ApiResponse> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         try {
-            Usuario usuario = usuarioService.registrarUsuario(usuarioDTO);
-            UsuarioDTO usuarioDTO2 = usuarioService.convertirUsuarioADTO(usuario);
-            return ResponseEntity.ok(new ApiResponse("Usuario Guardado", usuarioDTO2));
+            usuarioService.registrarUsuario(usuarioDTO);
+            return ResponseEntity.ok(new ApiResponse("Usuario Guardado", null));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }

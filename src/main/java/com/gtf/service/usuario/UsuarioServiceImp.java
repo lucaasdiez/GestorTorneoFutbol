@@ -1,7 +1,7 @@
 package com.gtf.service.usuario;
 
 import com.gtf.dto.UsuarioDTO;
-import com.gtf.enums.UsuarioEstado;
+import com.gtf.enums.EstadoEnum;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Usuario;
 import com.gtf.repository.UsuarioRepository;
@@ -19,14 +19,16 @@ public class UsuarioServiceImp implements UsuarioService{
     private final ModelMapper modelMapper;
 
     @Override
-    public Usuario registrarUsuario(UsuarioDTO usuarioDTO) {
-        return Optional.of(usuarioDTO)
+    public void registrarUsuario(UsuarioDTO usuarioDTO) {
+        Optional.of(usuarioDTO)
                 .filter(usuario -> !usuarioRepository.existsUsuarioByUsername(usuario.getUsername()))
                 .map(usuarioDTOReq ->{
-                    Usuario usuario = new Usuario();
-                    usuario.setUsername(usuarioDTOReq.getUsername());
-                    usuario.setPassword(usuarioDTOReq.getPassword());
-                    usuario.setEstadoCuenta(UsuarioEstado.Activado);
+                    Usuario usuario = Usuario.builder()
+                            .username(usuarioDTOReq.getUsername())
+                            .password(usuarioDTOReq.getPassword())
+                            .dni(usuarioDTOReq.getDni())
+                            .estadoCuenta(EstadoEnum.Activado)
+                            .build();
                     return usuarioRepository.save(usuario);
                 }).orElseThrow(()-> new ResourceNotFoundException("Usuario ya existente"));
     }
@@ -35,7 +37,7 @@ public class UsuarioServiceImp implements UsuarioService{
     public void eliminarUsuario(String nombreUsuario) {
        Usuario usuario = usuarioRepository.findByUsername(nombreUsuario)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-       usuario.setEstadoCuenta(UsuarioEstado.Desactivado);
+       usuario.setEstadoCuenta(EstadoEnum.Desactivado);
        usuarioRepository.save(usuario);
     }
 

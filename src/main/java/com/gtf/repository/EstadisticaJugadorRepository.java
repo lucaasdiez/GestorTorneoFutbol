@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface EstadisticaJugadorRepository extends JpaRepository<EstadisticaJugador, Integer> {
-    Optional<EstadisticaJugador> findEstadisticaJugadorByJugadorId(Integer id );
+    EstadisticaJugador findEstadisticaJugadorByJugadorId(Integer id );
     EstadisticaJugador findEstadisticaJugadorByJugadorNombreIgnoreCase(String nombre);
+
+    EstadisticaJugador findEstadisticaJugadorByJugadorDni(String dni);
 }

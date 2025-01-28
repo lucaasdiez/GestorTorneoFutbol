@@ -35,21 +35,21 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
     private EntityManager entityManager;
 
     @Override
-    public EventoPartido agregarEvento(EventoPartidoDTO eventoPartidoDTO, Integer equipoId, Integer jugadorId, Integer idPartido) {
+    public void agregarEvento(EventoPartidoDTO eventoPartidoDTO, Integer equipoId, Integer jugadorId, Integer idPartido) {
         Equipo equipo = equipoRepository.findById(equipoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
         Jugador jugador = jugadorRepository.findById(jugadorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
         Partido partido = partidoRepository.findById(idPartido)
                 .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado"));
-        EventoPartido eventoPartido = new EventoPartido();
-        eventoPartido.setEvento(eventoPartidoDTO.getEvento());
-        eventoPartido.setMinuto(eventoPartidoDTO.getMinuto());
-        eventoPartido.setJugador(jugador);
-        eventoPartido.setEquipo(equipo);
-        eventoPartido.setPartido(partido);
+        EventoPartido eventoPartido = EventoPartido.builder()
+                .evento(eventoPartidoDTO.getEvento())
+                .minuto(eventoPartidoDTO.getMinuto())
+                .jugador(jugador)
+                .partido(partido)
+                .equipo(equipo)
+                .build();
         eventoPartidoRepository.save(eventoPartido);
-        return eventoPartido;
     }
 
     @Override
@@ -80,8 +80,6 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<EventoPartido> criteriaQuery =criteriaBuilder.createQuery(EventoPartido.class);
         Root<EventoPartido> root= criteriaQuery.from(EventoPartido.class);
-
-
         List<Predicate> predicados =new ArrayList<>();
         if (equipo != null){
             predicados.add(criteriaBuilder.equal(

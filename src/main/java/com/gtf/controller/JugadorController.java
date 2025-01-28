@@ -24,10 +24,10 @@ public class JugadorController {
     private final JugadorService jugadorService;
     private final EstadisticaJugadorService estadisticaJugadorService;
 
-    @GetMapping("/jugador/{nombre}")
-    public ResponseEntity<ApiResponse> getJugador(@PathVariable String nombre) {
+    @GetMapping("/jugador/{dni}")
+    public ResponseEntity<ApiResponse> getJugador(@PathVariable String dni) {
         try {
-            Jugador jugador = jugadorService.getJugadorByNombre(nombre);
+            Jugador jugador = jugadorService.getJugadorByDni(dni);
             JugadorDTO jugadorDTO = jugadorService.convertirAJugadorDTO(jugador);
             return ResponseEntity.ok(new ApiResponse("Jugador", jugadorDTO));
         }catch (ResourceNotFoundException e){
@@ -46,10 +46,10 @@ public class JugadorController {
         }
     }
 
-    @GetMapping("/jugador/{nombreJugador}/estadistica")
-    public ResponseEntity<ApiResponse> getJugadorEstadistica(@PathVariable String nombreJugador) {
+    @GetMapping("/jugador/{dni}/estadistica")
+    public ResponseEntity<ApiResponse> getJugadorEstadistica(@PathVariable String dni) {
         try {
-            EstadisticaJugador estadisticaJugador = estadisticaJugadorService.getEstadisticaJugadorByNombreJugador(nombreJugador);
+            EstadisticaJugador estadisticaJugador = estadisticaJugadorService.getEstadisticaJugadorByJugadorDni(dni);
             EstadisticaJugadorDTO estadisticaJugadorDTO = estadisticaJugadorService.convertirEstadisticaJugadorADTO(estadisticaJugador);
             return ResponseEntity.ok(new ApiResponse("Estadistica", estadisticaJugadorDTO));
         }catch (ResourceNotFoundException e){
@@ -60,21 +60,19 @@ public class JugadorController {
     @PostMapping("/jugador/agregar")
     public ResponseEntity<ApiResponse> agregarJugador(@RequestBody JugadorDTO jugador){
         try {
-            Jugador jugadorAgregado = jugadorService.agregarJugador(jugador);
-            JugadorDTO jugadorDTO = jugadorService.convertirAJugadorDTO(jugadorAgregado);
-            return ResponseEntity.ok(new ApiResponse("Jugador", jugadorDTO));
+           jugadorService.agregarJugador(jugador);
+            return ResponseEntity.ok(new ApiResponse("Jugador agregado correctamente", null));
         }catch (Exception e){
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }
     }
 
-    @PostMapping("/jugador/{idJugador}/estadisticas/agregar")
-    public ResponseEntity<ApiResponse> agregarEstadisticaJugador(@PathVariable Integer idJugador,
+    @PostMapping("/jugador/{dni}/estadisticas/agregar")
+    public ResponseEntity<ApiResponse> agregarEstadisticaJugador(@PathVariable String dni,
                                                                  @RequestBody EstadisticaJugadorDTO estadisticaJugador){
         try {
-            EstadisticaJugador estadisticaJugadorAgregada = estadisticaJugadorService.agregarEstadisticaJugador(estadisticaJugador, idJugador);
-            EstadisticaJugadorDTO estadisticaJugadorDTO = estadisticaJugadorService.convertirEstadisticaJugadorADTO(estadisticaJugadorAgregada);
-            return ResponseEntity.ok(new ApiResponse("Estadistica Agregada", estadisticaJugadorDTO));
+              estadisticaJugadorService.agregarEstadisticaJugador(estadisticaJugador, dni);
+            return ResponseEntity.ok(new ApiResponse("Estadistica Agregada", null));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

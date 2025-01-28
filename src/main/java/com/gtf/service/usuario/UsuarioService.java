@@ -6,7 +6,7 @@ import com.gtf.model.Usuario;
 import java.util.List;
 
 public interface UsuarioService {
-    Usuario registrarUsuario(UsuarioDTO usuarioDTO);
+    void registrarUsuario(UsuarioDTO usuarioDTO);
     void eliminarUsuario(String nombreUsuario);
     Usuario getUsuarioByNombreUsuario(String usuario);
     UsuarioDTO convertirUsuarioADTO(Usuario usuario);

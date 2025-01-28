@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface TorneoRepository extends JpaRepository<Torneo, Integer> {
     List<Torneo> findTorneoByEstado(TorneoEstado estado);
 
-    Optional<Torneo> findByNombreIgnoreCase(String nombre);
+    Optional<Torneo> findTorneoByNombreIgnoreCase(String nombre);
+
+    /*List<Torneo> findAllByUsuarioDni(String dni);*/
 }

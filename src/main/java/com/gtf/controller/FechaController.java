@@ -46,9 +46,8 @@ public class FechaController {
     @PostMapping("/fecha/agregar")
     public ResponseEntity<ApiResponse> agregarFecha(@RequestBody FechaDTO fecha) {
         try {
-           Fecha fechaNueva =  fechaService.agregarFecha(fecha);
-           FechaDTO fechaDTO = fechaService.convertirFechaADTO(fechaNueva);
-           return ResponseEntity.ok(new ApiResponse("Fecha", fechaDTO));
+          fechaService.agregarFecha(fecha);
+           return ResponseEntity.ok(new ApiResponse("Fecha agregada", null));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }

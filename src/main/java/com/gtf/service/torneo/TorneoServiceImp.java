@@ -7,7 +7,9 @@ import com.gtf.model.Equipo;
 import com.gtf.model.Torneo;
 import com.gtf.repository.EquipoRepository;
 import com.gtf.repository.TorneoRepository;
+import com.gtf.repository.UsuarioRepository;
 import com.gtf.service.equipo.EquipoService;
+import com.gtf.service.fecha.FechaService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ public class TorneoServiceImp implements TorneoService {
     private final EquipoRepository equipoRepository;
     private final EquipoService equipoService;
     private final ModelMapper modelMapper;
+    private final UsuarioRepository usuarioRepository;
+    private final FechaService fechaService;
 
     @Override
     public Torneo getTorneoById(Integer id) {
@@ -29,16 +33,17 @@ public class TorneoServiceImp implements TorneoService {
     }
 
     @Override
-    public Torneo crearTorneo(String torneoNombre) {
-        Torneo torneo = new Torneo();
-        torneo.setNombre(torneoNombre);
-        torneo.setEstado(TorneoEstado.Comenzado);
-        return torneoRepository.save(torneo);
+    public void crearTorneo(String torneoNombre) {
+        Torneo torneo = Torneo.builder()
+                .nombre(torneoNombre)
+                .estado(TorneoEstado.Comenzado)
+                .build();
+        torneoRepository.save(torneo);
     }
 
     @Override
     public Torneo getTorneoByNombre(String nombre) {
-        return torneoRepository.findByNombreIgnoreCase(nombre)
+        return torneoRepository.findTorneoByNombreIgnoreCase(nombre)
                 .orElseThrow(()-> new ResourceNotFoundException("Torneo no encotrado"));
     }
 
@@ -47,23 +52,14 @@ public class TorneoServiceImp implements TorneoService {
         return torneoRepository.findTorneoByEstado(estado);
     }
 
-    @Override
-    public Torneo agregarEquipoATorneo(Integer idTorneo, Integer idEquipo) {
-        Equipo equipo = equipoService.getEquipoById(idEquipo);
-        Torneo torneo = torneoRepository.findById(idTorneo)
-                .orElseThrow(() -> new ResourceNotFoundException("Torneo no encontrado"));
-        if(torneo.getEstado().equals(TorneoEstado.Comenzado)){
-            torneo.getEquipos().add(equipo);
-            equipo.setTorneo(torneo);
-            equipoRepository.save(equipo);
-            torneoRepository.save(torneo);
-        }
-        return torneo;
-    }
 
     @Override
     public TorneoDTO convertirATorneoDTO(Torneo torneo) {
-        return modelMapper.map(torneo, TorneoDTO.class);
+        return TorneoDTO.builder()
+                .nombre(torneo.getNombre())
+                .equipos(equipoService.convertirAEquiposDTO(torneo.getEquipos()))
+                .fechas(fechaService.convertirAFechasDTO(torneo.getFechas()))
+                .build();
     }
 
     @Override
@@ -71,5 +67,11 @@ public class TorneoServiceImp implements TorneoService {
         return torneos.stream()
                 .map(torneo -> modelMapper.map(torneo,  TorneoDTO.class))
                 .toList();
+    }
+
+    @Override
+    public List<Torneo> getAllTorneosByUsuarioDni(String dni) {
+        /*return torneoRepository.findAllByUsuarioDni(dni);*/
+        return null;
     }
 }

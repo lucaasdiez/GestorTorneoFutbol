@@ -1,16 +1,14 @@
 package com.gtf.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class EstadisticaEquipo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +21,6 @@ public class EstadisticaEquipo {
     private int puntos;
 
     @OneToOne
-    @JoinColumn(name = "equipo_id")
+    @JoinColumn(name = "equipo_id", nullable = false)
     private Equipo equipo;
 }

@@ -1,23 +1,24 @@
 package com.gtf.model;
 
+import com.gtf.enums.EstadoEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Jugador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String dni;
     private String nombre;
     private String apellido;
     private String posicion;
+    private EstadoEnum estado;
 
     @ManyToOne
     @JoinColumn(name = "equipo_id")

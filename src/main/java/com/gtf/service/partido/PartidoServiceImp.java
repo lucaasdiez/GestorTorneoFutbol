@@ -4,6 +4,7 @@ import com.gtf.dto.PartidoDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.*;
 import com.gtf.repository.ArbitroRepository;
+import com.gtf.repository.EquipoRepository;
 import com.gtf.repository.FechaRepository;
 import com.gtf.repository.PartidoRepository;
 import com.gtf.service.arbitro.ArbitroService;
@@ -27,10 +28,9 @@ import java.util.List;
 public class PartidoServiceImp implements PartidoService {
     private final PartidoRepository partidoRepository;
     private final ModelMapper modelMapper;
-    private final ArbitroService arbitroService;
-    private final EquipoService equipoService;
     private final FechaRepository fechaRepository;
     private final ArbitroRepository arbitroRepository;
+    private final EquipoRepository equipoRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -43,30 +43,32 @@ public class PartidoServiceImp implements PartidoService {
     }
 
     @Override
-    public Partido agregarPartido( PartidoDTO partidoDTO) {
-        Arbitro arbitro = arbitroService.getArbitroById(partidoDTO.getArbitro().getId());
-        Equipo equipoLocal = equipoService.getEquipoById(partidoDTO.getEquipo_local().getId());
-        Equipo equipoVisitante = equipoService.getEquipoById(partidoDTO.getEquipo_visitante().getId());
-        Fecha fecha = fechaRepository.findById(partidoDTO.getFecha().getId())
+    public void agregarPartido(PartidoDTO partidoDTO) {
+        Arbitro arbitro = arbitroRepository.findByDni(partidoDTO.getArbitro_dni())
+                .orElseThrow(() -> new ResourceNotFoundException("Arbitro no encontrado"));
+        Equipo equipoLocal = equipoRepository.getEquipoByNombre(partidoDTO.getEquipo_local_nombre());
+        Equipo equipoVisitante = equipoRepository.getEquipoByNombre(partidoDTO.getEquipo_visitante_nombre());
+        Fecha fecha = fechaRepository.findByNumero(partidoDTO.getFecha_numero())
                 .orElseThrow(() -> new ResourceNotFoundException("Fecha no encontrada"));
-        Partido partido = new Partido();
-        partido.setArbitro(arbitro);
-        partido.setEquipo_local(equipoLocal);
-        partido.setEquipo_visitante(equipoVisitante);
-        partido.setFecha(fecha);
-        return partidoRepository.save(partido);
+        Partido partido = Partido.builder()
+                .arbitro(arbitro)
+                .equipo_local(equipoLocal)
+                .equipo_visitante(equipoVisitante)
+                .fecha(fecha)
+                .build();
+        partidoRepository.save(partido);
     }
 
     @Override
-    public Partido actualizarPartido(PartidoDTO partidoDTO) {
+    public void actualizarPartido(PartidoDTO partidoDTO) {
         Partido partido = partidoRepository.findById(partidoDTO.getId())
                         .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado"));
-        Arbitro arbitro = arbitroRepository.findById(partidoDTO.getArbitro().getId())
+        Arbitro arbitro = arbitroRepository.findByNombre(partidoDTO.getArbitro_nombre())
                         .orElseThrow(() -> new ResourceNotFoundException("Arbitro no encontrado"));
         partido.setResultado(partidoDTO.getResultado());
         partido.setFecha(partido.getFecha());
         partido.setArbitro(arbitro);
-        return partidoRepository.save(partido);
+        partidoRepository.save(partido);
     }
 
     @Override

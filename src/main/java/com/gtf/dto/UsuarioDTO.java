@@ -1,8 +1,8 @@
 package com.gtf.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.gtf.enums.UsuarioEstado;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gtf.dto.equipo.FullEquipoDTO;
+import com.gtf.enums.EstadoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioDTO {
-    private Integer id;
+    private String dni;
     private String username;
     private String password;
-    private UsuarioEstado estado;
-    @JsonBackReference
-    private EquipoDTO equipo;
-    @JsonBackReference
+    private EstadoEnum estado;
+    private FullEquipoDTO equipo;
+    @JsonIgnore
     private List<TorneoDTO> torneos;
 }

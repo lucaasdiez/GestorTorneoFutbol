@@ -48,14 +48,15 @@ public class FechaServiceImp implements FechaService {
     }
 
     @Override
-    public Fecha agregarFecha( FechaDTO fechaDTO) {
-        Torneo torneo= torneoRepository.findById(fechaDTO.getTorneo().getId())
+    public void agregarFecha( FechaDTO fechaDTO) {
+        Torneo torneo= torneoRepository.findById(fechaDTO.getTorneoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Torneo no encontrado"));
-        Fecha fecha = new Fecha();
-        fecha.setNumero(fechaDTO.getNumero());
-        fecha.setFechaDia(fechaDTO.getFechaDia());
-        fecha.setTorneo(torneo);
-        return  fechaRepository.save(fecha);
+        Fecha fecha = Fecha.builder()
+                .numero(fechaDTO.getNumero())
+                .fechaDia(fechaDTO.getFechaDia())
+                .torneo(torneo)
+                .build();
+        fechaRepository.save(fecha);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class FechaServiceImp implements FechaService {
         }
         if(torneo != null){
             predicates.add(criteriaBuilder.equal(
-                    criteriaBuilder.lower(root.get("torneo")), torneo.toLowerCase()));
+                    criteriaBuilder.lower(root.get("torneo").get("nombre")), torneo.toLowerCase()));
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Fecha> query = entityManager.createQuery(criteriaQuery);

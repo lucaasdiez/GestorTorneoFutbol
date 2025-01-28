@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface JugadorService {
     Jugador getJugadorById(Integer id);
-    Jugador getJugadorByNombre(String nombre);
+    Jugador getJugadorByDni(String dni);
     List<Jugador> getJugadores();
-    Jugador agregarJugador(JugadorDTO jugadorDTO);
+    void agregarJugador(JugadorDTO jugadorDTO);
     void eliminarJugador(Integer id);
     List<Jugador> getJugadoresByEquipoNombre(String equipo);
     JugadorDTO convertirAJugadorDTO(Jugador jugador);

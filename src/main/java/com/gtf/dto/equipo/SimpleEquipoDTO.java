@@ -1,17 +1,16 @@
-package com.gtf.dto;
+package com.gtf.dto.equipo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArbitroDTO {
+@Builder
+public class SimpleEquipoDTO {
     private String nombre;
-    private String apellido;
-    private List<PartidoDTO> partidos;
-    private String dni;
+    private String usuarioDni;
+    private String torneoNombre;
 }

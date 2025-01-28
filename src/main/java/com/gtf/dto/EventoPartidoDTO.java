@@ -12,7 +12,6 @@ public class EventoPartidoDTO {
     private Integer id;
     private String evento; //amarrilla, roja, gol
     private int minuto;
-    private PartidoDTO partido;
-    private JugadorDTO jugador;
-    private EquipoDTO equipo;
+    private String jugador;
+    private String equipo;
 }

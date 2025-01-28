@@ -17,36 +17,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EstadisticaEquipoServiceImp implements EstadisticaEquipoService {
     private final EstadisticaEquipoRepository estadisticaEquipoRepository;
-    private final ModelMapper modelMapper;
     private final EquipoRepository equipoRepository;
 
     @Override
-    public EstadisticaEquipo agregarEstditicaEquipo(EstadisticaEquipoDTO estadisticaEquipoDTO, Integer idEquipo) {
+    public void  agregarEstditicaEquipo(EstadisticaEquipoDTO estadisticaEquipoDTO, Integer idEquipo) {
         Equipo equipo = equipoRepository.findById(idEquipo)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
-        Optional<EstadisticaEquipo> estadisticaEquipoExistente = estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(equipo.getNombre());
+        EstadisticaEquipo estadVieja = estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(equipo.getNombre());
         EstadisticaEquipo estadisticaEquipo;
-        if (estadisticaEquipoExistente.isPresent()) {
-            estadisticaEquipo = estadisticaEquipoExistente.get();
-            estadisticaEquipo.setEquipo(equipo);
-            estadisticaEquipo.setDerrotas(estadisticaEquipo.getDerrotas() + estadisticaEquipoDTO.getDerrotas());
-            estadisticaEquipo.setPuntos(estadisticaEquipo.getPuntos() + estadisticaEquipoDTO.getPuntos());
-            estadisticaEquipo.setVictorias(estadisticaEquipo.getVictorias() + estadisticaEquipoDTO.getVictorias());
-            estadisticaEquipo.setGolesContra(estadisticaEquipo.getGolesContra() + estadisticaEquipoDTO.getGolesContra());
-            estadisticaEquipo.setPartidosJugados(estadisticaEquipo.getPartidosJugados() + estadisticaEquipoDTO.getPartidosJugados());
-            estadisticaEquipo.setGolesFavor(estadisticaEquipo.getGolesFavor() + estadisticaEquipoDTO.getGolesFavor());
+        if (estadVieja != null) {
+           estadisticaEquipo = estadisticaEquipoToEntity(estadVieja, estadisticaEquipoDTO);
+
         }else {
-            estadisticaEquipo = new EstadisticaEquipo();
-            estadisticaEquipo.setEquipo(equipo);
-            estadisticaEquipo.setDerrotas(estadisticaEquipoDTO.getDerrotas());
-            estadisticaEquipo.setPuntos(estadisticaEquipoDTO.getPuntos());
-            estadisticaEquipo.setVictorias(estadisticaEquipoDTO.getVictorias());
-            estadisticaEquipo.setGolesContra(estadisticaEquipoDTO.getGolesContra());
-            estadisticaEquipo.setPartidosJugados(estadisticaEquipoDTO.getPartidosJugados());
-            estadisticaEquipo.setGolesFavor(estadisticaEquipoDTO.getGolesFavor());
+            estadisticaEquipo = EstadisticaEquipo.builder()
+                    .equipo(equipo)
+                    .derrotas(estadisticaEquipoDTO.getDerrotas())
+                    .puntos(estadisticaEquipoDTO.getPuntos())
+                    .victorias(estadisticaEquipoDTO.getVictorias())
+                    .golesContra(estadisticaEquipoDTO.getGolesContra())
+                    .golesFavor(estadisticaEquipoDTO.getGolesFavor())
+                    .partidosJugados(estadisticaEquipoDTO.getPartidosJugados())
+                    .build();
         }
-        return  estadisticaEquipoRepository.save(estadisticaEquipo);
+        estadisticaEquipoRepository.save(estadisticaEquipo);
     }
+
 
     @Override
     public EstadisticaEquipo getEstadisticaEquipoById(Integer id) {
@@ -56,12 +51,29 @@ public class EstadisticaEquipoServiceImp implements EstadisticaEquipoService {
 
     @Override
     public EstadisticaEquipo getEstadisticaEquipoByNombreEquipo(String nombre) {
-        return estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(nombre)
-                .orElseThrow(() -> new ResourceNotFoundException("Estadistica del Equipo no encontrada"));
+        return estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(nombre);
     }
 
     @Override
     public EstadisticaEquipoDTO convertirEstadicticaEquipoADTO(EstadisticaEquipo estadisticaEquipo) {
-        return modelMapper.map(estadisticaEquipo, EstadisticaEquipoDTO.class);
+        return EstadisticaEquipoDTO.builder()
+                .partidosJugados(estadisticaEquipo.getPartidosJugados())
+                .victorias(estadisticaEquipo.getVictorias())
+                .derrotas(estadisticaEquipo.getDerrotas())
+                .puntos(estadisticaEquipo.getPuntos())
+                .golesContra(estadisticaEquipo.getGolesContra())
+                .golesFavor(estadisticaEquipo.getGolesFavor())
+                .build();
     }
+
+    private EstadisticaEquipo estadisticaEquipoToEntity(EstadisticaEquipo estVieja, EstadisticaEquipoDTO estadisticaEquipoDTO) {
+        estVieja.setDerrotas(estVieja.getDerrotas() + estadisticaEquipoDTO.getDerrotas());
+        estVieja.setPartidosJugados(estVieja.getPartidosJugados() + estadisticaEquipoDTO.getPartidosJugados());
+        estVieja.setPuntos(estVieja.getPuntos() + estadisticaEquipoDTO.getPuntos());
+        estVieja.setVictorias(estVieja.getVictorias() + estadisticaEquipoDTO.getVictorias());
+        estVieja.setGolesFavor(estVieja.getGolesFavor() + estadisticaEquipoDTO.getGolesFavor());
+        estVieja.setGolesContra(estVieja.getGolesContra() + estadisticaEquipoDTO.getGolesContra());
+        return estVieja;
+    }
+
 }

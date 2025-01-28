@@ -1,18 +1,21 @@
 package com.gtf.service.equipo;
 
-import com.gtf.dto.EquipoDTO;
+import com.gtf.dto.EstadisticaEquipoDTO;
+import com.gtf.dto.equipo.SimpleEquipoDTO;
+import com.gtf.dto.equipo.FullEquipoDTO;
 import com.gtf.dto.JugadorDTO;
-import com.gtf.dto.UsuarioDTO;
-import com.gtf.enums.EquipoEstado;
+import com.gtf.enums.EstadoEnum;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.*;
 import com.gtf.repository.*;
+import com.gtf.service.estadisticaEquipo.EstadisticaEquipoService;
+import com.gtf.service.jugador.JugadorService;
+import com.gtf.service.partido.PartidoService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,9 @@ public class EquipoServiceImp implements EquipoService{
     private final JugadorRepository jugadorRepository;
     private final TorneoRepository torneoRepository;
     private final UsuarioRepository usuarioRepository;
-    private final EstadisticaEquipoRepository estadisticaEquipoRepository;
+    private final EstadisticaEquipoService estadisticaEquipoService;
+    private final JugadorService jugadorService;
+    private final PartidoService partidoService;
 
     @Override
     public Equipo getEquipoById(Integer id) {
@@ -42,22 +47,27 @@ public class EquipoServiceImp implements EquipoService{
     }
 
     @Override
+    public List<Equipo> getEquiposByEstado(EstadoEnum estado) {
+        return equipoRepository.findAllByEstadoEquipo(estado);
+    }
+
+    @Override
     public void eliminarEquipo(Integer id) {
         Equipo equipo = equipoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
-        equipo.setEstadoEquipo(EquipoEstado.Desactivado);
+        equipo.setEstadoEquipo(EstadoEnum.Desactivado);
         equipoRepository.save(equipo);
     }
 
     @Override
-    public Equipo updateEquipo(EquipoDTO equipoDTO, Integer id) {
-        return equipoRepository.findById(id)
-                .map(equipoExistente -> updateEquipoExistente(equipoExistente, equipoDTO))
+    public void updateEquipo(FullEquipoDTO fullEquipoDTO, Integer id) {
+         equipoRepository.findById(id)
+                .map(equipoExistente -> updateEquipoExistente(equipoExistente, fullEquipoDTO))
                 .map(equipoRepository::save)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
     }
 
-    private Equipo updateEquipoExistente(Equipo equipoExistente, EquipoDTO dto) {
+    private Equipo updateEquipoExistente(Equipo equipoExistente, FullEquipoDTO dto) {
         List<Jugador> jugadores = dto.getJugadores().stream()
                         .map(jugador -> jugadorRepository.findById(jugador.getId())
                                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado")))
@@ -69,38 +79,50 @@ public class EquipoServiceImp implements EquipoService{
     }
 
     @Override
-    public Equipo agregarEquipo(EquipoDTO equipoDTO) {
-        Torneo torneo = torneoRepository.findById(equipoDTO.getTorneo().getId())
+    public void agregarEquipo(SimpleEquipoDTO equipoResponseDTO) {
+        Torneo torneo = torneoRepository.findTorneoByNombreIgnoreCase(equipoResponseDTO.getTorneoNombre())
                 .orElseThrow(() -> new ResourceNotFoundException("Torneo no encontrado"));
-        Usuario usuario = usuarioRepository.findById(equipoDTO.getUsuario().getId())
+        Usuario usuario = usuarioRepository.findByDni(equipoResponseDTO.getUsuarioDni())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        Equipo newEquipo = new Equipo();
-        if(equipoRepository.existsByNombreIgnoreCase(equipoDTO.getNombre())){
+        if(equipoRepository.existsByNombreIgnoreCase(equipoResponseDTO.getNombre())){
             throw new IllegalArgumentException("Equipo ya existe");
         }
-        newEquipo.setNombre(equipoDTO.getNombre());
-        newEquipo.setTorneo(torneo);
-        newEquipo.setUsuario(usuario);
-        newEquipo.setEstadoEquipo(EquipoEstado.Activado);
-        return equipoRepository.save(newEquipo);
+        Equipo newEquipo = Equipo.builder()
+                .nombre(equipoResponseDTO.getNombre())
+                .torneo(torneo)
+                .usuario(usuario)
+                .estadoEquipo(EstadoEnum.Activado)
+                .build();
+        EstadisticaEquipo estadisticaEquipo = EstadisticaEquipo.builder()
+                .partidosJugados(0)
+                .golesFavor(0)
+                .golesContra(0)
+                .puntos(0)
+                .victorias(0)
+                .derrotas(0)
+                .equipo(newEquipo)
+                .build();
+        newEquipo.setEstadisticaEquipo(estadisticaEquipo);
+        equipoRepository.save(newEquipo);
     }
 
-    public EquipoDTO convertirEquipoADto(Equipo equipo) {
-        EquipoDTO equipoDTO = modelMapper.map(equipo, EquipoDTO.class);
-        List<Jugador> jugadores = jugadorRepository.findByEquipoId(equipo.getId());
-        List<JugadorDTO> jugadoresDTO =jugadores.stream()
-                .map(jugador -> modelMapper.map(jugador, JugadorDTO.class))
-                .toList();
-        UsuarioDTO usuarioDTO = modelMapper.map(equipo.getUsuario(), UsuarioDTO.class);
-        equipoDTO.setUsuario(usuarioDTO);
-        equipoDTO.setJugadores(jugadoresDTO);
-        return equipoDTO;
+    public FullEquipoDTO convertirEquipoADto(Equipo equipo) {
+       return  FullEquipoDTO.builder()
+                .nombre(equipo.getNombre())
+                .torneoNombre(equipo.getTorneo().getNombre())
+                .estadisticaEquipo(estadisticaEquipoService.convertirEstadicticaEquipoADTO(equipo.getEstadisticaEquipo()))
+                .jugadores(jugadorService.convertirAJugadoresDTO(equipo.getJugadores()))
+                .partidosLocal(partidoService.convertirAPartidosDTO(equipo.getPartidosLocal()))
+                .partidosVisitante(partidoService.convertirAPartidosDTO(equipo.getPartidosVisitante()))
+                .build();
     }
 
     @Override
-    public List<EquipoDTO> convertirAEquiposDTO(List<Equipo> equipos) {
+    public List<SimpleEquipoDTO> convertirAEquiposDTO(List<Equipo> equipos) {
         return equipos.stream()
-                .map(equipo -> modelMapper.map(equipo, EquipoDTO.class))
+                .map(equipo -> SimpleEquipoDTO.builder()
+                        .nombre(equipo.getNombre())
+                        .build())
                 .toList();
     }
 }

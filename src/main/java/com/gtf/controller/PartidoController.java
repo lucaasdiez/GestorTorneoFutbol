@@ -26,9 +26,8 @@ public class PartidoController {
     @PostMapping("/partido/agregar")
     public ResponseEntity<ApiResponse> agregarPartido(@RequestBody PartidoDTO partido) {
         try {
-            Partido partidoAgregado = partidoService.agregarPartido(partido);
-            PartidoDTO partidoDTO= partidoService.convertirPartidoAPartidoDTO(partidoAgregado);
-            return ResponseEntity.ok(new ApiResponse("Partido Agregado", partidoDTO));
+            partidoService.agregarPartido(partido);
+            return ResponseEntity.ok(new ApiResponse("Partido Agregado", null));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }
@@ -40,9 +39,8 @@ public class PartidoController {
                                                             @RequestParam Integer idPartido,
                                                             @RequestParam Integer idJugador) {
         try{
-            EventoPartido eventoPartido1 = eventoPartidoService.agregarEvento(eventoPartido, idEquipo, idPartido, idJugador);
-            EventoPartidoDTO eventoPartidoDTO = eventoPartidoService.convertirEventoPartidoaDTO(eventoPartido1);
-            return ResponseEntity.ok(new ApiResponse("Evento del Partido Agregado", eventoPartidoDTO));
+            eventoPartidoService.agregarEvento(eventoPartido, idEquipo, idPartido, idJugador);
+            return ResponseEntity.ok(new ApiResponse("Evento del Partido Agregado", null));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }
@@ -90,9 +88,8 @@ public class PartidoController {
     @PutMapping("/partido/actualizar")
     public ResponseEntity<ApiResponse> actualizarPartido(@RequestBody PartidoDTO partido) {
         try {
-            Partido partidoActualizado = partidoService.actualizarPartido(partido);
-            PartidoDTO partidoDTO = partidoService.convertirPartidoAPartidoDTO(partidoActualizado);
-            return ResponseEntity.ok(new ApiResponse("Partido Actualizado", partidoDTO));
+            partidoService.actualizarPartido(partido);
+            return ResponseEntity.ok(new ApiResponse("Partido Actualizado", null));
         }catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

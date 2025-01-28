@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface PartidoService {
     Partido getPartidoById(Integer id);
-    Partido agregarPartido(PartidoDTO partidoDTO);
+    void agregarPartido(PartidoDTO partidoDTO);
     PartidoDTO convertirPartidoAPartidoDTO(Partido partido);
     List<PartidoDTO> convertirAPartidosDTO(List<Partido> partidos);
-    Partido actualizarPartido(PartidoDTO partidoDTO);
+    void actualizarPartido(PartidoDTO partidoDTO);
     List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(int fecha, String equipoLocal, String equipoVisitante);
 }

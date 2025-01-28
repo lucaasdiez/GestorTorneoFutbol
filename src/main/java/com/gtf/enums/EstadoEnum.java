@@ -1,5 +1,5 @@
 package com.gtf.enums;
 
-public enum EquipoEstado {
+public enum EstadoEnum {
     Activado, Desactivado;
 }

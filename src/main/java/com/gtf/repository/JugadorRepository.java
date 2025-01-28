@@ -11,5 +11,5 @@ public interface JugadorRepository extends JpaRepository<Jugador, Integer> {
     List<Jugador> findByEquipoId(Integer equipoId);
     List<Jugador> findByEquipoNombreIgnoreCase(String equipo);
 
-    Optional<Jugador> findByNombreIgnoreCase(String nombre);
+    Optional<Jugador> findByDni(String dni);
 }
