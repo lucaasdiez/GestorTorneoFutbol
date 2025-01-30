@@ -35,10 +35,10 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
     private EntityManager entityManager;
 
     @Override
-    public void agregarEvento(EventoPartidoDTO eventoPartidoDTO, Integer equipoId, Integer jugadorId, Integer idPartido) {
+    public void agregarEvento(EventoPartidoDTO eventoPartidoDTO, Integer equipoId, String dniJugador, Integer idPartido) {
         Equipo equipo = equipoRepository.findById(equipoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
-        Jugador jugador = jugadorRepository.findById(jugadorId)
+        Jugador jugador = jugadorRepository.findByDni(dniJugador)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
         Partido partido = partidoRepository.findById(idPartido)
                 .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado"));
@@ -65,13 +65,16 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
 
     @Override
     public EventoPartidoDTO convertirEventoPartidoaDTO(EventoPartido eventoPartido) {
-        return modelMapper.map(eventoPartido, EventoPartidoDTO.class);
+        EventoPartidoDTO eventoPartidoDTO = modelMapper.map(eventoPartido, EventoPartidoDTO.class);
+        eventoPartidoDTO.setJugador(eventoPartido.getJugador().getNombre() + " " + eventoPartido.getJugador().getApellido());
+        eventoPartidoDTO.setEquipo(eventoPartido.getEquipo().getNombre());
+        return eventoPartidoDTO;
     }
 
     @Override
     public List<EventoPartidoDTO> convertirAEventosPartidosDTO(List<EventoPartido> eventoPartidos) {
         return eventoPartidos.stream()
-                .map(eventoPartido -> modelMapper.map(eventoPartido, EventoPartidoDTO.class))
+                .map(this::convertirEventoPartidoaDTO)
                 .toList();
     }
 

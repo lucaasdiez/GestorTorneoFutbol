@@ -37,9 +37,9 @@ public class PartidoController {
     public ResponseEntity<ApiResponse> agregarEventoPartido(@RequestBody EventoPartidoDTO eventoPartido,
                                                             @RequestParam Integer idEquipo,
                                                             @RequestParam Integer idPartido,
-                                                            @RequestParam Integer idJugador) {
+                                                            @RequestParam String dniJugador) {
         try{
-            eventoPartidoService.agregarEvento(eventoPartido, idEquipo, idPartido, idJugador);
+            eventoPartidoService.agregarEvento(eventoPartido, idEquipo, dniJugador,idPartido);
             return ResponseEntity.ok(new ApiResponse("Evento del Partido Agregado", null));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));

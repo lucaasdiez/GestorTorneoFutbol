@@ -3,8 +3,6 @@ package com.gtf.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @Entity
@@ -30,4 +28,6 @@ public class Partido {
     @ManyToOne
     @JoinColumn(name = "fecha_id")
     private Fecha fecha;
+    @OneToOne(mappedBy = "partido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EventoPartido eventoPartido;
 }

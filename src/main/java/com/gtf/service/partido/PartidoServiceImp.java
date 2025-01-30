@@ -9,6 +9,7 @@ import com.gtf.repository.FechaRepository;
 import com.gtf.repository.PartidoRepository;
 import com.gtf.service.arbitro.ArbitroService;
 import com.gtf.service.equipo.EquipoService;
+import com.gtf.service.eventoPartido.EventoPartidoService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class PartidoServiceImp implements PartidoService {
     private final FechaRepository fechaRepository;
     private final ArbitroRepository arbitroRepository;
     private final EquipoRepository equipoRepository;
+    private final EventoPartidoService eventoPartidoService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -52,6 +55,7 @@ public class PartidoServiceImp implements PartidoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Fecha no encontrada"));
         Partido partido = Partido.builder()
                 .arbitro(arbitro)
+                .resultado(partidoDTO.getResultado())
                 .equipo_local(equipoLocal)
                 .equipo_visitante(equipoVisitante)
                 .fecha(fecha)
@@ -63,11 +67,13 @@ public class PartidoServiceImp implements PartidoService {
     public void actualizarPartido(PartidoDTO partidoDTO) {
         Partido partido = partidoRepository.findById(partidoDTO.getId())
                         .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado"));
-        Arbitro arbitro = arbitroRepository.findByNombre(partidoDTO.getArbitro_nombre())
-                        .orElseThrow(() -> new ResourceNotFoundException("Arbitro no encontrado"));
         partido.setResultado(partidoDTO.getResultado());
         partido.setFecha(partido.getFecha());
-        partido.setArbitro(arbitro);
+        if(partidoDTO.getArbitro_dni() != null) {
+            Arbitro arbitro = arbitroRepository.findByDni(partidoDTO.getArbitro_dni())
+                .orElseThrow(() -> new ResourceNotFoundException("Arbitro no encontrado"));
+            partido.setArbitro(arbitro);
+        }
         partidoRepository.save(partido);
     }
 
@@ -97,7 +103,13 @@ public class PartidoServiceImp implements PartidoService {
 
     @Override
     public PartidoDTO convertirPartidoAPartidoDTO(Partido partido){
-        return modelMapper.map(partido, PartidoDTO.class);
+        return PartidoDTO.builder()
+                .arbitro_dni(partido.getArbitro().getNombre() + " " + partido.getArbitro().getApellido())
+                .resultado(partido.getResultado())
+                .equipo_local_nombre(partido.getEquipo_local().getNombre())
+                .equipo_visitante_nombre(partido.getEquipo_visitante().getNombre())
+                .eventoPartido(eventoPartidoService.convertirEventoPartidoaDTO(partido.getEventoPartido()))
+                .build();
     }
 
     @Override
