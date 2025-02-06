@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,5 +19,5 @@ public class PartidoDTO {
     private String equipo_visitante_nombre;
     private String arbitro_dni;
     private int  fecha_numero;
-    private EventoPartidoDTO eventoPartido;
+    private List<EventoPartidoDTO> eventoPartido;
 }

@@ -78,26 +78,27 @@ public class PartidoServiceImp implements PartidoService {
     }
 
     @Override
-    public List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(int fecha, String equipoLocal, String equipoVisitante) {
+    public List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(Integer fecha, String equipoLocal, String equipoVisitante) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Partido> criteriaQuery = criteriaBuilder.createQuery(Partido.class);
         Root<Partido> root = criteriaQuery.from(Partido.class);
 
         List<Predicate> predicates = new ArrayList<>();
-        if(fecha != 0){
-            predicates.add(criteriaBuilder.equal(root.get("fecha"), fecha));
+        if (fecha != null) {
+            predicates.add(criteriaBuilder.equal(root.get("fecha").get("numero"), fecha));
         }
-        if(equipoLocal != null){
+        if (equipoLocal != null && !equipoLocal.isEmpty()) {
             predicates.add(criteriaBuilder.equal(
-                    criteriaBuilder.lower(root.get("equipo_local")), equipoLocal.toLowerCase()));
+                    criteriaBuilder.lower(root.get("equipo_local").get("nombre")), equipoLocal.toLowerCase()));
         }
-        if(equipoVisitante != null){
+        if (equipoVisitante != null && !equipoVisitante.isEmpty()) {
             predicates.add(criteriaBuilder.equal(
-                    criteriaBuilder.lower(root.get("equipo_visitante")), equipoVisitante.toLowerCase()));
+                    criteriaBuilder.lower(root.get("equipo_visitante").get("nombre")), equipoVisitante.toLowerCase()));
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Partido> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
+
     }
 
 
@@ -108,14 +109,14 @@ public class PartidoServiceImp implements PartidoService {
                 .resultado(partido.getResultado())
                 .equipo_local_nombre(partido.getEquipo_local().getNombre())
                 .equipo_visitante_nombre(partido.getEquipo_visitante().getNombre())
-                .eventoPartido(eventoPartidoService.convertirEventoPartidoaDTO(partido.getEventoPartido()))
+                .eventoPartido(eventoPartidoService.convertirAEventosPartidosDTO(partido.getEventoPartido()))
                 .build();
     }
 
     @Override
     public List<PartidoDTO> convertirAPartidosDTO(List<Partido> partidos) {
         return partidos.stream()
-                .map(partido -> modelMapper.map(partido, PartidoDTO.class))
+                .map(this::convertirPartidoAPartidoDTO)
                 .toList();
     }
 }

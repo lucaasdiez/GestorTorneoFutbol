@@ -4,6 +4,8 @@ import com.gtf.enums.EstadoEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -27,6 +29,6 @@ public class Jugador {
     //orphanRemoval = true asegura que si un Jugador es eliminado, todas las estadísticas asociadas también se eliminen.
     @OneToOne(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private EstadisticaJugador estadisticaJugador;
-    @OneToOne(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
-    private EventoPartido eventoPartido;
+    @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventoPartido> eventoPartido;
 }

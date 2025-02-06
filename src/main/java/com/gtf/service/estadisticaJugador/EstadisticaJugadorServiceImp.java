@@ -25,7 +25,7 @@ public class EstadisticaJugadorServiceImp implements EstadisticaJugadorService {
     public void agregarEstadisticaJugador(EstadisticaJugadorDTO estadisticaJugadorDTO, String dni) {
         Jugador jugador = jugadorRepository.findByDni(dni)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
-        EstadisticaJugador estadisticaJugadorExistente = estadisticaJugadorRepository.findEstadisticaJugadorByJugadorNombreIgnoreCase(estadisticaJugadorDTO.getNombre_jugador());
+        EstadisticaJugador estadisticaJugadorExistente = estadisticaJugadorRepository.findEstadisticaJugadorByJugadorDni(dni);
        EstadisticaJugador estadisticaJugador;
         if(estadisticaJugadorExistente.getJugador().getDni().equals(dni)){
              estadisticaJugador = estadisticaJugadorToEntity(estadisticaJugadorExistente, estadisticaJugadorDTO);

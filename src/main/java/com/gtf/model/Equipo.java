@@ -2,6 +2,7 @@ package com.gtf.model;
 
 import com.gtf.enums.EstadoEnum;
 import jakarta.persistence.*;
+import jdk.jfr.Event;
 import lombok.*;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public class Equipo {
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+    @OneToMany(mappedBy = "equipo", cascade = CascadeType.ALL)
+    private List<EventoPartido> eventoPartidos;
 
 
 }

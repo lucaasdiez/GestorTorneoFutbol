@@ -47,7 +47,7 @@ public class PartidoController {
     }
 
     @GetMapping("/busqueda")
-    public ResponseEntity<ApiResponse> busquedarPartidos(@RequestParam(required = false) int fecha,
+    public ResponseEntity<ApiResponse> busquedarPartidos(@RequestParam(required = false) Integer fecha,
                                                          @RequestParam(required = false) String equipoLocal,
                                                          @RequestParam(required = false) String equipoVisitante){
         try {

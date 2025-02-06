@@ -11,5 +11,5 @@ public interface PartidoService {
     PartidoDTO convertirPartidoAPartidoDTO(Partido partido);
     List<PartidoDTO> convertirAPartidosDTO(List<Partido> partidos);
     void actualizarPartido(PartidoDTO partidoDTO);
-    List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(int fecha, String equipoLocal, String equipoVisitante);
+    List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(Integer fecha, String equipoLocal, String equipoVisitante);
 }

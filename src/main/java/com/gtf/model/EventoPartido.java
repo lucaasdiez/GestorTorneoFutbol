@@ -17,13 +17,13 @@ public class EventoPartido {
     private int minuto;
 
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "partido_id")
     private Partido partido;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "jugador_id")
     private Jugador jugador;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "equipo_id")
     private Equipo equipo;
 }

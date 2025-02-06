@@ -11,6 +11,7 @@ import com.gtf.repository.EventoPartidoRepository;
 import com.gtf.repository.JugadorRepository;
 import com.gtf.repository.PartidoRepository;
 import com.gtf.service.equipo.EquipoService;
+import com.gtf.service.estadisticaJugador.EstadisticaJugadorService;
 import com.gtf.service.jugador.JugadorService;
 import com.gtf.service.partido.PartidoService;
 import jakarta.persistence.EntityManager;
@@ -31,6 +32,8 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
     private final PartidoRepository partidoRepository;
+    private final JugadorService jugadorService;
+    private final EstadisticaJugadorService estadisticaJugadorService;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -49,6 +52,8 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
                 .partido(partido)
                 .equipo(equipo)
                 .build();
+        partido.getEventoPartido().add(eventoPartido);
+        equipo.getEventoPartidos().add(eventoPartido);
         eventoPartidoRepository.save(eventoPartido);
     }
 
@@ -81,20 +86,21 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
     @Override
     public List<EventoPartido> getEventoByEquipoYJugador(String equipo, String jugador) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<EventoPartido> criteriaQuery =criteriaBuilder.createQuery(EventoPartido.class);
-        Root<EventoPartido> root= criteriaQuery.from(EventoPartido.class);
-        List<Predicate> predicados =new ArrayList<>();
-        if (equipo != null){
+        CriteriaQuery<EventoPartido> criteriaQuery = criteriaBuilder.createQuery(EventoPartido.class);
+        Root<EventoPartido> root = criteriaQuery.from(EventoPartido.class);
+
+        List<Predicate> predicados = new ArrayList<>();
+
+        if (equipo != null && !equipo.isEmpty()) {
             predicados.add(criteriaBuilder.equal(
-                    criteriaBuilder.lower(root.get("nombre")),
-                    equipo.toLowerCase()));
+                    criteriaBuilder.lower(root.get("equipo").get("nombre")), equipo.toLowerCase()));
         }
-        if (jugador != null){
+        if (jugador != null && !jugador.isEmpty()) {
             predicados.add(criteriaBuilder.equal(
-                    criteriaBuilder.lower(root.get("nombre")),
-                    jugador.toLowerCase()));
+                    criteriaBuilder.lower(root.get("jugador").get("nombre")), jugador.toLowerCase()));
         }
-        criteriaQuery.select(root).where(criteriaBuilder.and(predicados.toArray(new Predicate[0])));
+
+        criteriaQuery.select(root).where(predicados.toArray(new Predicate[0]));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 

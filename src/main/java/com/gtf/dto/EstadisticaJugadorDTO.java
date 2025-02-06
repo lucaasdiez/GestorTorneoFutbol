@@ -19,6 +19,5 @@ public class EstadisticaJugadorDTO {
     private int tarjetaRoja;
     private int tarjetaAmarilla;
     private int minJugados;
-    private String nombre_jugador;
 
 }
