@@ -18,6 +18,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/torneos")
 public class TorneoController {
     private final TorneoService torneoService;

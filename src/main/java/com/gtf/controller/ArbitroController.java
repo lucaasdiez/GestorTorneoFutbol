@@ -14,6 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/arbitros")
 public class ArbitroController {
     private final ArbitroService arbitroService;

@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/equipos")
-
+@CrossOrigin("*")
 public class EquipoController {
     private final EquipoService equipoService;
     private final EstadisticaEquipoService estadisticaEquipoService;
