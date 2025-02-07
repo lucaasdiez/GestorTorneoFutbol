@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,13 @@ public class ArbitroServiceImp implements ArbitroService {
     @Override
     public ArbitroDTO convertirArbitroADTO(Arbitro arbitro) {
         return modelMapper.map(arbitro, ArbitroDTO.class);
+    }
+
+    @Override
+    public List<ArbitroDTO> convertirArbitrosDTO(List<Arbitro> arbitros) {
+        return arbitros.stream()
+                .map(arbitro -> modelMapper.map(arbitro, ArbitroDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

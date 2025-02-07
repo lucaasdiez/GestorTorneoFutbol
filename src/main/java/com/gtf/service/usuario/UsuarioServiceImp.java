@@ -1,12 +1,16 @@
 package com.gtf.service.usuario;
 
+import com.gtf.auth.AuthResponse;
+import com.gtf.config.JwtService;
 import com.gtf.dto.UsuarioDTO;
 import com.gtf.enums.EstadoEnum;
+import com.gtf.enums.RoleEnum;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.Usuario;
 import com.gtf.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,20 +21,28 @@ import java.util.Optional;
 public class UsuarioServiceImp implements UsuarioService{
     private final UsuarioRepository usuarioRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Override
-    public void registrarUsuario(UsuarioDTO usuarioDTO) {
-        Optional.of(usuarioDTO)
-                .filter(usuario -> !usuarioRepository.existsUsuarioByUsername(usuario.getUsername()))
-                .map(usuarioDTOReq ->{
-                    Usuario usuario = Usuario.builder()
+    public AuthResponse registrarUsuario(UsuarioDTO usuarioDTO) {
+        Usuario usuario = Optional.of(usuarioDTO)
+                .filter(usuarioReq -> !usuarioRepository.existsUsuarioByUsername(usuarioReq.getUsername()))
+                .map(usuarioDTOReq -> {
+                    Usuario nuevoUsuario = Usuario.builder()
                             .username(usuarioDTOReq.getUsername())
-                            .password(usuarioDTOReq.getPassword())
+                            .password(passwordEncoder.encode(usuarioDTOReq.getPassword()))
                             .dni(usuarioDTOReq.getDni())
                             .estadoCuenta(EstadoEnum.Activado)
+                            .role(RoleEnum.USER)
                             .build();
-                    return usuarioRepository.save(usuario);
-                }).orElseThrow(()-> new ResourceNotFoundException("Usuario ya existente"));
+                    return usuarioRepository.save(nuevoUsuario); // Guardamos y retornamos el usuario
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario ya existente"));
+        var jwtToken = jwtService.generateToken(usuario);
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 
     @Override

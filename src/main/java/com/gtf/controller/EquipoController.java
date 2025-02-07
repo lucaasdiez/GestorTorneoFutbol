@@ -11,6 +11,7 @@ import com.gtf.service.equipo.EquipoService;
 import com.gtf.service.estadisticaEquipo.EstadisticaEquipoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +21,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/equipos")
+
 public class EquipoController {
     private final EquipoService equipoService;
     private final EstadisticaEquipoService estadisticaEquipoService;
 
     @GetMapping("/equipo")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getEquipoByNombre(@RequestParam String nombreEquipo){
         try {
             Equipo equipo = equipoService.getEquipoByNombre(nombreEquipo);
@@ -36,6 +39,7 @@ public class EquipoController {
     }
 
     @GetMapping("/todos")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getEquiposByTorneo(@RequestParam String torneoNombre){
         try {
             List<Equipo> equipos = equipoService.getEquiposByTorneo(torneoNombre);
@@ -47,6 +51,7 @@ public class EquipoController {
     }
 
     @GetMapping("/equipo/estadisticas")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getEquiposEstadisticas(@RequestParam String nombreEquipo){
         try {
             EstadisticaEquipo estadisticaEquipo = estadisticaEquipoService.getEstadisticaEquipoByNombreEquipo(nombreEquipo);
@@ -58,6 +63,7 @@ public class EquipoController {
     }
 
     @PostMapping("/equipo/agregar")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> agregarEquipo(@RequestBody SimpleEquipoDTO equipoDTO){
         try {
              equipoService.agregarEquipo(equipoDTO);
@@ -68,6 +74,7 @@ public class EquipoController {
     }
 
     @PostMapping("/equipo/{idEquipo}/estadisticas/agregar")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> agregarEstadisticaEquipo(@RequestBody EstadisticaEquipoDTO estadisticaEquipoDTO,
                                                                 @PathVariable Integer idEquipo){
         try {
@@ -80,6 +87,7 @@ public class EquipoController {
 
 
     @DeleteMapping("/equipo/{idEquipo}/eliminar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> eliminarEquipo(@PathVariable Integer idEquipo){
         try {
             equipoService.eliminarEquipo(idEquipo);
@@ -90,6 +98,7 @@ public class EquipoController {
     }
 
     @PutMapping("/equipo/{idEquipo}/modificar")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> modificarEquipo(@PathVariable Integer idEquipo,
                                                        @RequestBody FullEquipoDTO fullEquipoDTO){
         try {

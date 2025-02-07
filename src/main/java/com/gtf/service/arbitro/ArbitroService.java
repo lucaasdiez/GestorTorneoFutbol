@@ -12,5 +12,6 @@ public interface ArbitroService {
     List<Arbitro> getArbitroByEstado(EstadoEnum estado);
     void agregarArbitro(ArbitroDTO arbitroDTO);
     ArbitroDTO convertirArbitroADTO(Arbitro arbitro);
+    List<ArbitroDTO> convertirArbitrosDTO(List<Arbitro> arbitro);
     void cambiarEstadoArbitro(String dni);
 }

@@ -10,6 +10,7 @@ import com.gtf.service.estadisticaJugador.EstadisticaJugadorService;
 import com.gtf.service.jugador.JugadorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class JugadorController {
     private final EstadisticaJugadorService estadisticaJugadorService;
 
     @GetMapping("/jugador/{dni}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getJugador(@PathVariable String dni) {
         try {
             Jugador jugador = jugadorService.getJugadorByDni(dni);
@@ -36,6 +38,7 @@ public class JugadorController {
     }
 
     @GetMapping("/equipo/{equipoNombre}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getJugadorEquipo(@PathVariable String equipoNombre) {
         try {
             List<Jugador> jugadores = jugadorService.getJugadoresByEquipoNombre(equipoNombre);
@@ -47,6 +50,7 @@ public class JugadorController {
     }
 
     @GetMapping("/jugador/{dni}/estadistica")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getJugadorEstadistica(@PathVariable String dni) {
         try {
             EstadisticaJugador estadisticaJugador = estadisticaJugadorService.getEstadisticaJugadorByJugadorDni(dni);
@@ -58,6 +62,7 @@ public class JugadorController {
     }
 
     @PostMapping("/jugador/agregar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> agregarJugador(@RequestBody JugadorDTO jugador){
         try {
            jugadorService.agregarJugador(jugador);
@@ -68,6 +73,7 @@ public class JugadorController {
     }
 
     @PostMapping("/jugador/{dni}/estadisticas/agregar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> agregarEstadisticaJugador(@PathVariable String dni,
                                                                  @RequestBody EstadisticaJugadorDTO estadisticaJugador){
         try {
@@ -79,6 +85,7 @@ public class JugadorController {
     }
 
     @DeleteMapping("/jugador/{idJugador}/eliminar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> eliminarJugador(@PathVariable Integer idJugador){
         try {
             jugadorService.eliminarJugador(idJugador);

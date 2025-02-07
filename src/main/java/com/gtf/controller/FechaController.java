@@ -7,6 +7,7 @@ import com.gtf.response.ApiResponse;
 import com.gtf.service.fecha.FechaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class FechaController {
     private final FechaService fechaService;
 
     @GetMapping("/fecha/{numeroFecha}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getFechaByNumeroFecha(@PathVariable int numeroFecha) {
         try {
             Fecha fecha = fechaService.getFechaByNumero(numeroFecha);
@@ -32,6 +34,7 @@ public class FechaController {
     }
 
     @GetMapping("/todas/filtro")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> todasFechasTorneo(@RequestParam(required = false) String torneoNombre,
                                                          @RequestParam(required = false) LocalDate dia) {
         try {
@@ -44,6 +47,7 @@ public class FechaController {
     }
 
     @PostMapping("/fecha/agregar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> agregarFecha(@RequestBody FechaDTO fecha) {
         try {
           fechaService.agregarFecha(fecha);

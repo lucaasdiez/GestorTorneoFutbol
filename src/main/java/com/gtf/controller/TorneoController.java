@@ -9,6 +9,7 @@ import com.gtf.service.torneo.TorneoService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class TorneoController {
     private final TorneoService torneoService;
 
     @GetMapping("/torneo")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getTorneoByNombre(@RequestParam String nombreTorneo){
         try {
             Torneo torneo = torneoService.getTorneoByNombre(nombreTorneo);
@@ -33,6 +35,7 @@ public class TorneoController {
     }
 
     @GetMapping("/torneo/estado")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getTorneosByEstado(@RequestParam TorneoEstado estado){
         try{
             List<Torneo> torneos = torneoService.getTorneosPorEstado(estado);
@@ -45,6 +48,7 @@ public class TorneoController {
 
 
     @PostMapping("/torneo/crear")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> crearTorneo(@RequestParam String torneoNombre){
         try {
             torneoService.crearTorneo(torneoNombre);

@@ -10,6 +10,7 @@ import com.gtf.service.eventoPartido.EventoPartidoService;
 import com.gtf.service.partido.PartidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class PartidoController {
     private final EventoPartidoService eventoPartidoService;
 
     @PostMapping("/partido/agregar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> agregarPartido(@RequestBody PartidoDTO partido) {
         try {
             partidoService.agregarPartido(partido);
@@ -34,6 +36,7 @@ public class PartidoController {
     }
 
     @PostMapping("/partido/eventoPartido/agregar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> agregarEventoPartido(@RequestBody EventoPartidoDTO eventoPartido,
                                                             @RequestParam Integer idEquipo,
                                                             @RequestParam Integer idPartido,
@@ -47,6 +50,7 @@ public class PartidoController {
     }
 
     @GetMapping("/busqueda")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> busquedarPartidos(@RequestParam(required = false) Integer fecha,
                                                          @RequestParam(required = false) String equipoLocal,
                                                          @RequestParam(required = false) String equipoVisitante){
@@ -60,6 +64,7 @@ public class PartidoController {
     }
 
     @GetMapping("/partido/{idPartido}/eventos")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> eventosPartido(@PathVariable Integer idPartido){
         try {
             List<EventoPartido> eventoPartido = eventoPartidoService.getEventoPartidosByPartidoId(idPartido);
@@ -71,6 +76,7 @@ public class PartidoController {
     }
 
     @GetMapping("/partido/eventos/busqueda")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> getEventosPartidos(@RequestParam(required = false) String equipoNombre,
                                                           @RequestParam(required = false) String jugadorNombre){
         try {
@@ -86,6 +92,7 @@ public class PartidoController {
 
 
     @PutMapping("/partido/actualizar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> actualizarPartido(@RequestBody PartidoDTO partido) {
         try {
             partidoService.actualizarPartido(partido);
@@ -96,6 +103,7 @@ public class PartidoController {
     }
 
     @GetMapping("/partido/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ApiResponse> obtenerPartido(@PathVariable Integer id) {
         try {
             Partido partido = partidoService.getPartidoById(id);
