@@ -7,6 +7,7 @@ import com.gtf.model.Usuario;
 import com.gtf.response.ApiResponse;
 import com.gtf.service.usuario.UsuarioService;
 import com.gtf.service.usuario.UsuarioServiceImp;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class UsuarioController {
 
     @PostMapping("/registrar")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<ApiResponse> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<ApiResponse> registrarUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO) {
         try {
             AuthResponse authResponse = usuarioService.registrarUsuario(usuarioDTO);
             AuthResponse response = AuthResponse.builder()

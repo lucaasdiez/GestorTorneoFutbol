@@ -19,6 +19,7 @@ public class Jugador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(nullable = false, unique = true)
     @NotBlank(message = "El DNI no puede estar vacío.")
     @Size(max = 10, message = "El DNI no puede superar los 20 caracteres.")

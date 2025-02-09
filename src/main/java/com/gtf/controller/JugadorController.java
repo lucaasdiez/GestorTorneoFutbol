@@ -8,7 +8,9 @@ import com.gtf.model.Jugador;
 import com.gtf.response.ApiResponse;
 import com.gtf.service.estadisticaJugador.EstadisticaJugadorService;
 import com.gtf.service.jugador.JugadorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin("*")
@@ -64,7 +67,7 @@ public class JugadorController {
 
     @PostMapping("/jugador/agregar")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> agregarJugador(@RequestBody JugadorDTO jugador){
+    public ResponseEntity<ApiResponse> agregarJugador(@Valid @RequestBody JugadorDTO jugador){
         try {
            jugadorService.agregarJugador(jugador);
             return ResponseEntity.ok(new ApiResponse("Jugador agregado correctamente", null));
