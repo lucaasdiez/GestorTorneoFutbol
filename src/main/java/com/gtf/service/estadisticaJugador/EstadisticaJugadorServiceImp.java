@@ -2,6 +2,7 @@ package com.gtf.service.estadisticaJugador;
 
 import com.gtf.dto.EstadisticaJugadorDTO;
 import com.gtf.dto.JugadorDTO;
+import com.gtf.enums.EventoPartidoEnum;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.EstadisticaJugador;
 import com.gtf.model.Jugador;
@@ -13,6 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.gtf.enums.EventoPartidoEnum.AMARILLA;
+import static com.gtf.enums.EventoPartidoEnum.GOL;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +67,34 @@ public class EstadisticaJugadorServiceImp implements EstadisticaJugadorService {
     @Override
     public EstadisticaJugadorDTO convertirEstadisticaJugadorADTO(EstadisticaJugador estadisticaJugador) {
         return modelMapper.map(estadisticaJugador, EstadisticaJugadorDTO.class);
+    }
+
+    @Override
+    public void agregarEstadisticaDelPartido(Jugador jugador, EventoPartidoEnum evento) {
+        EstadisticaJugador estadisticaJugador = jugador.getEstadisticaJugador();
+        switch (evento){
+            case GOL:
+                estadisticaJugador.setGoles(estadisticaJugador.getGoles() + 1);
+                estadisticaJugadorRepository.save(estadisticaJugador);
+                break;
+            case AMARILLA:
+                estadisticaJugador.setTarjetaAmarilla(estadisticaJugador.getTarjetaAmarilla() + 1);
+                estadisticaJugadorRepository.save(estadisticaJugador);
+                break;
+            case ROJA:
+                estadisticaJugador.setTarjetaRoja(estadisticaJugador.getTarjetaRoja() + 1);
+                estadisticaJugadorRepository.save(estadisticaJugador);
+                break;
+            case ASISTENCIA:
+                estadisticaJugador.setAsistencias(estadisticaJugador.getAsistencias() + 1);
+                estadisticaJugadorRepository.save(estadisticaJugador);
+                break;
+            default:
+                break;
+
+
+        }
+
     }
 
     private EstadisticaJugador estadisticaJugadorToEntity(EstadisticaJugador estadisticaJugadorExistente, EstadisticaJugadorDTO estadisticaJugadorDTO) {

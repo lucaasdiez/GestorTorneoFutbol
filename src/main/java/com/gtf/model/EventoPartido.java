@@ -1,5 +1,6 @@
 package com.gtf.model;
 
+import com.gtf.enums.EventoPartidoEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ public class EventoPartido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String evento; //amarrilla, roja, gol
+    private EventoPartidoEnum evento; //amarrilla, roja, gol
     private int minuto;
 
 

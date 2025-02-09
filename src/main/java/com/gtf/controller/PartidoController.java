@@ -8,6 +8,7 @@ import com.gtf.model.Partido;
 import com.gtf.response.ApiResponse;
 import com.gtf.service.eventoPartido.EventoPartidoService;
 import com.gtf.service.partido.PartidoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ public class PartidoController {
 
     @PostMapping("/partido/agregar")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> agregarPartido(@RequestBody PartidoDTO partido) {
+    public ResponseEntity<ApiResponse> agregarPartido(@Valid @RequestBody PartidoDTO partido) {
         try {
             partidoService.agregarPartido(partido);
             return ResponseEntity.ok(new ApiResponse("Partido Agregado", null));
@@ -94,7 +95,7 @@ public class PartidoController {
 
     @PutMapping("/partido/actualizar")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> actualizarPartido(@RequestBody PartidoDTO partido) {
+    public ResponseEntity<ApiResponse> actualizarPartido(@Valid @RequestBody PartidoDTO partido) {
         try {
             partidoService.actualizarPartido(partido);
             return ResponseEntity.ok(new ApiResponse("Partido Actualizado", null));

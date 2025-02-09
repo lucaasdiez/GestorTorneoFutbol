@@ -76,4 +76,12 @@ public class UsuarioServiceImp implements UsuarioService{
     public List<Usuario> getAllUsuarios() {
         return usuarioRepository.findAll();
     }
+
+    @Override
+    public void modificarPassword(String nuevaPassword, String nombreUsuario) {
+        Usuario usuario = usuarioRepository.findByUsername(nombreUsuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+    }
 }

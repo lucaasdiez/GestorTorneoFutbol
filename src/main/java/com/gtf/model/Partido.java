@@ -1,6 +1,7 @@
 package com.gtf.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.List;
@@ -15,7 +16,9 @@ public class Partido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Pattern(regexp = "^\\d+-\\d+$",  message = "El resultado debe tener el formato 'X-Y', donde X e Y son números")
     private String resultado;
+    private boolean finalizado;
 
 
     @ManyToOne

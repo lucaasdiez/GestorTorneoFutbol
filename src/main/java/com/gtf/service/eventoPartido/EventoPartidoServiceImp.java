@@ -52,6 +52,7 @@ public class EventoPartidoServiceImp implements EventoPartidoService {
                 .partido(partido)
                 .equipo(equipo)
                 .build();
+        estadisticaJugadorService.agregarEstadisticaDelPartido(jugador, eventoPartido.getEvento());
         partido.getEventoPartido().add(eventoPartido);
         equipo.getEventoPartidos().add(eventoPartido);
         eventoPartidoRepository.save(eventoPartido);

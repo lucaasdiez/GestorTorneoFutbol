@@ -13,4 +13,5 @@ public interface UsuarioService {
     UsuarioDTO convertirUsuarioADTO(Usuario usuario);
     List<UsuarioDTO> convertirUsuarioDTO(List<Usuario> usuarios);
     List<Usuario> getAllUsuarios();
+    void modificarPassword(String nuevaPassword, String nombreUsuario);
 }

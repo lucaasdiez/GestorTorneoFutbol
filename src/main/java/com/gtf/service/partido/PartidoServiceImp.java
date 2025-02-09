@@ -3,12 +3,10 @@ package com.gtf.service.partido;
 import com.gtf.dto.PartidoDTO;
 import com.gtf.exeptions.ResourceNotFoundException;
 import com.gtf.model.*;
-import com.gtf.repository.ArbitroRepository;
-import com.gtf.repository.EquipoRepository;
-import com.gtf.repository.FechaRepository;
-import com.gtf.repository.PartidoRepository;
+import com.gtf.repository.*;
 import com.gtf.service.arbitro.ArbitroService;
 import com.gtf.service.equipo.EquipoService;
+import com.gtf.service.estadisticaEquipo.EstadisticaEquipoService;
 import com.gtf.service.eventoPartido.EventoPartidoService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -34,6 +32,8 @@ public class PartidoServiceImp implements PartidoService {
     private final ArbitroRepository arbitroRepository;
     private final EquipoRepository equipoRepository;
     private final EventoPartidoService eventoPartidoService;
+    private final EstadisticaEquipoService estadisticaEquipoService;
+    private final EstadisticaEquipoRepository estadisticaEquipoRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -74,8 +74,14 @@ public class PartidoServiceImp implements PartidoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Arbitro no encontrado"));
             partido.setArbitro(arbitro);
         }
+        if (partidoDTO.isFinalizado()){
+            partido.setFinalizado(true);
+            actualizarEstadisticaPartido(partido);
+        }
         partidoRepository.save(partido);
     }
+
+
 
     @Override
     public List<Partido> getPartidosByFechaOrEquipoLocalOrEquipoVisitante(Integer fecha, String equipoLocal, String equipoVisitante) {
@@ -118,5 +124,41 @@ public class PartidoServiceImp implements PartidoService {
         return partidos.stream()
                 .map(this::convertirPartidoAPartidoDTO)
                 .toList();
+    }
+
+    private void actualizarEstadisticaPartido(Partido partido) {
+        Equipo equipoLocal = partido.getEquipo_local();
+        Equipo equipoVisitante = partido.getEquipo_visitante();
+
+        EstadisticaEquipo estadisticaEquipoLocal = estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(equipoLocal.getNombre());
+        EstadisticaEquipo estadisticaEquipoVisitante = estadisticaEquipoRepository.findEstadisticaEquipoByEquipoNombreIgnoreCase(equipoVisitante.getNombre());
+
+        estadisticaEquipoLocal.setPartidosJugados(estadisticaEquipoLocal.getPartidosJugados() + 1);
+        estadisticaEquipoVisitante.setPartidosJugados(estadisticaEquipoVisitante.getPartidosJugados() + 1);
+
+        String[] resultado = partido.getResultado().split("-");
+        int golesLocal = Integer.parseInt(resultado[0]);
+        int golesVisitante = Integer.parseInt(resultado[1]);
+
+        estadisticaEquipoLocal.setGolesFavor(estadisticaEquipoLocal.getGolesFavor() + golesLocal);
+        estadisticaEquipoLocal.setGolesContra(estadisticaEquipoLocal.getGolesContra() + golesVisitante);
+        estadisticaEquipoVisitante.setGolesFavor(estadisticaEquipoVisitante.getGolesFavor() + golesVisitante);
+        estadisticaEquipoVisitante.setGolesContra(estadisticaEquipoVisitante.getGolesContra() + golesLocal);
+
+        if(golesLocal > golesVisitante){
+            estadisticaEquipoLocal.setPuntos(estadisticaEquipoLocal.getPuntos() + 3);
+            estadisticaEquipoLocal.setVictorias(estadisticaEquipoLocal.getVictorias() + 1);
+            estadisticaEquipoVisitante.setDerrotas(estadisticaEquipoVisitante.getDerrotas() + 1);
+        }else if(golesLocal < golesVisitante){
+            estadisticaEquipoVisitante.setPuntos(estadisticaEquipoVisitante.getPuntos() + 3);
+            estadisticaEquipoVisitante.setVictorias(estadisticaEquipoVisitante.getVictorias() + 1);
+            estadisticaEquipoLocal.setDerrotas(estadisticaEquipoLocal.getDerrotas() + 1);
+        }else {
+            estadisticaEquipoVisitante.setPuntos(estadisticaEquipoVisitante.getPuntos() + 1);
+            estadisticaEquipoLocal.setPuntos(estadisticaEquipoLocal.getPuntos() + 1);
+        }
+        estadisticaEquipoRepository.save(estadisticaEquipoLocal);
+        estadisticaEquipoRepository.save(estadisticaEquipoVisitante);
+
     }
 }

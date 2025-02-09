@@ -2,6 +2,7 @@ package com.gtf.auth;
 
 
 import com.gtf.config.JwtService;
+import com.gtf.enums.EstadoEnum;
 import com.gtf.enums.RoleEnum;
 import com.gtf.model.Usuario;
 import com.gtf.repository.UsuarioRepository;
@@ -26,6 +27,7 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(RoleEnum.ADMIN)
+                .estadoCuenta(EstadoEnum.Activado)
                 .dni(request.getDni())
                 .build();
         userRepository.save(user);

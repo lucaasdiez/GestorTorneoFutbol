@@ -1,7 +1,9 @@
 package com.gtf.service.estadisticaJugador;
 
 import com.gtf.dto.EstadisticaJugadorDTO;
+import com.gtf.enums.EventoPartidoEnum;
 import com.gtf.model.EstadisticaJugador;
+import com.gtf.model.Jugador;
 
 
 public interface EstadisticaJugadorService {
@@ -10,4 +12,6 @@ public interface EstadisticaJugadorService {
     EstadisticaJugador getEstadisticaJugadorByJugadorDni(String dni);
     EstadisticaJugador getEstadisticaJugadorByJugadorNombre(String nombre);
     EstadisticaJugadorDTO convertirEstadisticaJugadorADTO(EstadisticaJugador estadisticaJugador);
+
+    void agregarEstadisticaDelPartido(Jugador jugador, EventoPartidoEnum evento);
 }

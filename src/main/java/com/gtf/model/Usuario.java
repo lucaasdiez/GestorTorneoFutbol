@@ -3,6 +3,9 @@ package com.gtf.model;
 import com.gtf.enums.EstadoEnum;
 import com.gtf.enums.RoleEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,9 +25,24 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(nullable = false, unique = true)
+    @NotBlank(message = "El DNI no puede estar vacío.")
+    @Size(max = 10, message = "El DNI no puede superar los 20 caracteres.")
+    @Pattern(regexp = "\\d{7,8}", message = "El DNI debe ser un número de 7 u 8 dígitos.")
     private String dni;
+
+    @Column(nullable = false, unique = true, length = 50)
+    @NotBlank(message = "El nombre de usuario es obligatorio.")
+    @Size(max = 50, message = "El nombre de usuario no puede superar los 50 caracteres.")
     private String username;
+
+    @Column(nullable = false, length = 100)
+    @NotBlank(message = "La contraseña es obligatoria.")
+    @Size(max = 100, message = "La contraseña no puede superar los 100 caracteres.")
     private String password;
+
+
     private RoleEnum role;
     private EstadoEnum estadoCuenta;
 

@@ -10,8 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArbitroDTO {
+    private String dni;
     private String nombre;
     private String apellido;
     private List<PartidoDTO> partidos;
-    private String dni;
 }

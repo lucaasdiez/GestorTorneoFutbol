@@ -40,6 +40,7 @@ public class ArbitroServiceImp implements ArbitroService {
         Arbitro arbitro = Arbitro.builder()
                 .apellido(arbitroDTO.getApellido())
                 .nombre(arbitroDTO.getNombre())
+                .dni(arbitroDTO.getDni())
                 .build();
         arbitroRepository.save(arbitro);
     }

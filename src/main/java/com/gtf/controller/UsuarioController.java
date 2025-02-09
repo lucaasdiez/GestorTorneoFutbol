@@ -63,6 +63,13 @@ public class UsuarioController {
         }
     }
 
+    @PatchMapping("/modificarContraseña/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> modificarPassword(@RequestParam String username, @RequestBody String password) {
+        usuarioService.modificarPassword(username, password);
+        return ResponseEntity.ok(new ApiResponse("Contraseña modificada", null));
+    }
+
     @DeleteMapping("/usuario/{nombreUsuario}/eliminar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> eliminarUsuario(@PathVariable String nombreUsuario) {
